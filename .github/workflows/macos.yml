@@ -32,8 +32,10 @@ jobs:
           fetch-depth: 1
       - name: build macos
         run: |
-          cmake -S ./ -B ./
+          cmake -S ./ -B ./bin/release
+          cd ./bin/release
           make
+          cd ../../
       # 打包
       - name: package
         run: |
