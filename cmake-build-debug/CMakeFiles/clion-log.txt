@@ -1,0 +1,4 @@
+"/Users/sakata/Library/Application Support/JetBrains/Toolbox/apps/CLion/ch-0/211.7442.42/CLion.app/Contents/bin/cmake/mac/bin/cmake" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_PREFIX_PATH=/Users/sakata/Documents/Code/Qt/5.15.2/clang_64/lib/cmake -G "CodeBlocks - Unix Makefiles" /Users/sakata/Documents/Code/QtProjects/Funder
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /Users/sakata/Documents/Code/QtProjects/Funder/cmake-build-debug
