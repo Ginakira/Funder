@@ -32,11 +32,13 @@ jobs:
           fetch-depth: 1
       - name: build macos
         run: |
-          cmake
-          make
+          mkdir build
+          cmake --build ./build --target all
+          # make
       # 打包
       - name: package
         run: |
+          cd build
           # 拷贝依赖
           macdeployqt bin/release/${targetName}.app -qmldir=. -verbose=1 -dmg
       # 上传artifacts          
