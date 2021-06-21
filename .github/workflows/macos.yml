@@ -33,7 +33,7 @@ jobs:
       - name: build macos
         run: |
           mkdir build
-          cmake --build ./build --target all
+          cmake -B ./build
           # make
       # 打包
       - name: package
