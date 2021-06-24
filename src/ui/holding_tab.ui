@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>633</width>
-    <height>258</height>
+    <width>751</width>
+    <height>320</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -39,6 +39,113 @@
     <widget class="QTableView" name="holding_table_view"/>
    </item>
    <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_8">
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_3">
+       <item>
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>成本总金额：</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="total_cost_label">
+         <property name="text">
+          <string>0.00</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_4">
+       <item>
+        <widget class="QLabel" name="label_6">
+         <property name="text">
+          <string>持有总收益：</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="total_earnings_label">
+         <property name="text">
+          <string>0.00</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_5">
+       <item>
+        <widget class="QLabel" name="label_8">
+         <property name="text">
+          <string>持有总金额：</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="total_holding_amount_label">
+         <property name="text">
+          <string>0.00</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_7">
+       <item>
+        <widget class="QLabel" name="label_7">
+         <property name="text">
+          <string>预计未结算总收益：</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="total_expected_earnings_label">
+         <property name="text">
+          <string>0.00</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_9">
+       <item>
+        <widget class="QLabel" name="settled_earnings_text_label">
+         <property name="text">
+          <string>已结算收益：</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="settled_earnings_label">
+         <property name="text">
+          <string>0.00</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
       <spacer name="horizontal_spacer">
@@ -54,23 +161,9 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="net_figure_button">
+      <widget class="QPushButton" name="stock_holdings_button">
        <property name="text">
-        <string>净值图</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="valuation_figure_button">
-       <property name="text">
-        <string>估值图</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="position_figure_button">
-       <property name="text">
-        <string>持仓图</string>
+        <string>持仓股票</string>
        </property>
       </widget>
      </item>

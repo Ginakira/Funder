@@ -24,10 +24,19 @@ signals:
 
     void refresh_market();
 
-private:
+private slots:
+
     void new_record();
 
     void delete_record();
+
+    void calculate_summary_info();
+
+    void save_horizontal_state();
+
+private:
+    void ui_init();
+
 
     Ui::HoldingTab *ui;
     QSqlTableModel *db_model;

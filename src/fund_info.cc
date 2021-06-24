@@ -7,6 +7,7 @@
 
 #include "include/networker.h"
 #include "include/utility.h"
+#include "include/database.h"
 
 FundInfo::FundInfo(QSqlTableModel *model, QObject *parent) : QObject(parent), model(model) {}
 
@@ -223,7 +224,8 @@ bool FundInfo::get_nav_info() {
 }
 
 bool FundInfo::refresh_fund_info() {
-    return get_name_and_valuation_info() && get_nav_info();
+    bool ret = get_name_and_valuation_info() && get_nav_info();
+    return ret;
 }
 
 bool FundInfo::calculate_other_info() {
@@ -242,64 +244,67 @@ bool FundInfo::calculate_other_info() {
 
 QSqlRecord FundInfo::save_to_record() {
     QSqlRecord record = model->record();
-    record.setGenerated("id", false);
-    record.setValue("code", code);
-    record.setValue("name", name);
-    record.setValue("holding_unit_cost", holding_unit_cost);
-    record.setValue("holding_share", holding_share);
-    record.setValue("holding_total_cost", holding_total_cost);
-    record.setValue("holding_earnings", holding_earnings);
-    record.setValue("holding_earning_rate", holding_earning_rate);
-    record.setValue("holding_amount", holding_amount);
-    record.setValue("nav", nav);
-    record.setValue("nav_time", nav_time);
-    record.setValue("nav_gains", nav_gains);
-    record.setValue("valuation", valuation);
-    record.setValue("valuation_gains", valuation_gains);
-    record.setValue("valuation_time", valuation_time);
-    record.setValue("expected_earnings", expected_earnings);
-    record.setValue("remarks", remarks);
+    record.setGenerated(ID_KEY, false);
+    record.setValue(CODE_KEY, code);
+    record.setValue(NAME_KEY, name);
+    record.setValue(HOLDING_UNIT_COST_KEY, holding_unit_cost);
+    record.setValue(HOLDING_SHARE_KEY, holding_share);
+    record.setValue(HOLDING_TOTAL_COST_KEY, holding_total_cost);
+    record.setValue(HOLDING_EARNINGS_KEY, holding_earnings);
+    record.setValue(HOLDING_EARNING_RATE_KEY, holding_earning_rate);
+    record.setValue(HOLDING_AMOUNT_KEY, holding_amount);
+    record.setValue(NAV_KEY, nav);
+    record.setValue(NAV_TIME_KEY, nav_time);
+    record.setValue(NAV_GAINS_KEY, nav_gains);
+    record.setValue(VALUATION_KEY, valuation);
+    record.setValue(VALUATION_GAINS_KEY, valuation_gains);
+    record.setValue(VALUATION_TIME_KEY, valuation_time);
+    record.setValue(EXPECTED_EARNINGS_KEY, expected_earnings);
+    record.setValue(REMARKS_KEY, remarks);
     return record;
 }
 
 bool FundInfo::save_to_record(QSqlRecord &record) {
-    record.setGenerated("id", false);
-    record.setValue("code", code);
-    record.setValue("name", name);
-    record.setValue("holding_unit_cost", holding_unit_cost);
-    record.setValue("holding_share", holding_share);
-    record.setValue("holding_total_cost", holding_total_cost);
-    record.setValue("holding_earnings", holding_earnings);
-    record.setValue("holding_earning_rate", holding_earning_rate);
-    record.setValue("holding_amount", holding_amount);
-    record.setValue("nav", nav);
-    record.setValue("nav_time", nav_time);
-    record.setValue("nav_gains", nav_gains);
-    record.setValue("valuation", valuation);
-    record.setValue("valuation_gains", valuation_gains);
-    record.setValue("valuation_time", valuation_time);
-    record.setValue("expected_earnings", expected_earnings);
-    record.setValue("remarks", remarks);
+    for (int i = 0; i < record.count(); ++i) {
+        record.setGenerated(i, true);
+    }
+    record.setGenerated(ID_KEY, false);
+    record.setValue(CODE_KEY, code);
+    record.setValue(NAME_KEY, name);
+    record.setValue(HOLDING_UNIT_COST_KEY, holding_unit_cost);
+    record.setValue(HOLDING_SHARE_KEY, holding_share);
+    record.setValue(HOLDING_TOTAL_COST_KEY, holding_total_cost);
+    record.setValue(HOLDING_EARNINGS_KEY, holding_earnings);
+    record.setValue(HOLDING_EARNING_RATE_KEY, holding_earning_rate);
+    record.setValue(HOLDING_AMOUNT_KEY, holding_amount);
+    record.setValue(NAV_KEY, nav);
+    record.setValue(NAV_TIME_KEY, nav_time);
+    record.setValue(NAV_GAINS_KEY, nav_gains);
+    record.setValue(VALUATION_KEY, valuation);
+    record.setValue(VALUATION_GAINS_KEY, valuation_gains);
+    record.setValue(VALUATION_TIME_KEY, valuation_time);
+    record.setValue(EXPECTED_EARNINGS_KEY, expected_earnings);
+    record.setValue(REMARKS_KEY, remarks);
     return true;
 }
 
 void FundInfo::set_info_from_record(const QSqlRecord &record) {
-    code = record.value("code").toString();
-    name = record.value("name").toString();
-    holding_unit_cost = record.value("holding_unit_cost").toDouble();
-    holding_share = record.value("holding_share").toDouble();
-    holding_total_cost = record.value("holding_total_cost").toDouble();
-    holding_earnings = record.value("holding_earnings").toDouble();
-    holding_earning_rate = record.value("holding_earning_rate").toDouble();
-    holding_amount = record.value("holding_amount").toDouble();
-    nav = record.value("nav").toDouble();
-    nav_time = record.value("nav_time").toString();
-    nav_gains = record.value("nav_gains").toDouble();
-    valuation = record.value("valuation").toDouble();
-    valuation_gains = record.value("valuation_gains").toDouble();
-    valuation_time = record.value("valuation_time").toString();
-    expected_earnings = record.value("expected_earnings").toDouble();
-    remarks = record.value("remarks").toString();
+    code = record.value(CODE_KEY).toString();
+    name = record.value(NAME_KEY).toString();
+    holding_unit_cost = record.value(HOLDING_UNIT_COST_KEY).toDouble();
+    holding_share = record.value(HOLDING_SHARE_KEY).toDouble();
+    holding_total_cost = record.value(HOLDING_TOTAL_COST_KEY).toDouble();
+    holding_earnings = record.value(HOLDING_EARNINGS_KEY).toDouble();
+    holding_earning_rate = record.value(HOLDING_EARNING_RATE_KEY).toDouble();
+    holding_amount = record.value(HOLDING_AMOUNT_KEY).toDouble();
+    nav = record.value(NAV_KEY).toDouble();
+    nav_time = record.value(NAV_TIME_KEY).toString();
+    nav_gains = record.value(NAV_GAINS_KEY).toDouble();
+    valuation = record.value(VALUATION_KEY).toDouble();
+    valuation_gains = record.value(VALUATION_GAINS_KEY).toDouble();
+    valuation_time = record.value(VALUATION_TIME_KEY).toString();
+    expected_earnings = record.value(EXPECTED_EARNINGS_KEY).toDouble();
+    remarks = record.value(REMARKS_KEY).toString();
 }
 
 bool FundInfo::insert_new_record_to_database() {

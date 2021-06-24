@@ -9,6 +9,9 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     networker = NetWorker::instance();
 
+    // 初始化设置信息
+    init_settings_info("Ginakira", "Funder");
+
     // 初始化数据库
     if (!init_db_connect()) {
         this->setEnabled(false);

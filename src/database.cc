@@ -1,14 +1,14 @@
 #include "include/database.h"
 
 #include <QDebug>
-#include <QDir>
 #include <QMessageBox>
 #include <QSqlError>
 #include <QSqlQuery>
+#include <QCoreApplication>
 
 bool init_db_connect() {
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
-    db.setDatabaseName("data.db");
+    db.setDatabaseName(QCoreApplication::applicationDirPath() + "/data.db");
     if (!db.open()) {
         QMessageBox::critical(nullptr, QObject::tr("数据库连接发生错误"),
                               db.lastError().text());
@@ -65,20 +65,20 @@ bool init_db_connect() {
 }
 
 void set_db_model_header_data(QSqlTableModel *model) {
-    model->setHeaderData(1, Qt::Horizontal, QObject::tr("基金代码"));
-    model->setHeaderData(2, Qt::Horizontal, QObject::tr("基金名称"));
-    model->setHeaderData(3, Qt::Horizontal, QObject::tr("持仓成本"));
-    model->setHeaderData(4, Qt::Horizontal, QObject::tr("持有份额"));
-    model->setHeaderData(5, Qt::Horizontal, QObject::tr("成本金额"));
-    model->setHeaderData(6, Qt::Horizontal, QObject::tr("持有收益"));
-    model->setHeaderData(7, Qt::Horizontal, QObject::tr("收益率"));
-    model->setHeaderData(8, Qt::Horizontal, QObject::tr("持有金额"));
-    model->setHeaderData(9, Qt::Horizontal, QObject::tr("单位净值"));
-    model->setHeaderData(10, Qt::Horizontal, QObject::tr("净值涨跌"));
-    model->setHeaderData(11, Qt::Horizontal, QObject::tr("净值时间"));
-    model->setHeaderData(12, Qt::Horizontal, QObject::tr("盘中估值"));
-    model->setHeaderData(13, Qt::Horizontal, QObject::tr("估值涨跌"));
-    model->setHeaderData(14, Qt::Horizontal, QObject::tr("估值时间"));
-    model->setHeaderData(15, Qt::Horizontal, QObject::tr("预计收益"));
-    model->setHeaderData(16, Qt::Horizontal, QObject::tr("备注"));
+    model->setHeaderData(CODE_COL, Qt::Horizontal, QObject::tr("基金代码"));
+    model->setHeaderData(NAME_COL, Qt::Horizontal, QObject::tr("基金名称"));
+    model->setHeaderData(HOLDING_UNIT_COST_COL, Qt::Horizontal, QObject::tr("持仓成本"));
+    model->setHeaderData(HOLDING_SHARE_COL, Qt::Horizontal, QObject::tr("持有份额"));
+    model->setHeaderData(HOLDING_TOTAL_COST_COL, Qt::Horizontal, QObject::tr("成本金额"));
+    model->setHeaderData(HOLDING_EARNINGS_COL, Qt::Horizontal, QObject::tr("持有收益"));
+    model->setHeaderData(HOLDING_EARNING_RATE_COL, Qt::Horizontal, QObject::tr("收益率"));
+    model->setHeaderData(HOLDING_AMOUNT_COL, Qt::Horizontal, QObject::tr("持有金额"));
+    model->setHeaderData(NAV_COL, Qt::Horizontal, QObject::tr("单位净值"));
+    model->setHeaderData(NAV_GAINS_COL, Qt::Horizontal, QObject::tr("净值涨跌"));
+    model->setHeaderData(NAV_TIME_COL, Qt::Horizontal, QObject::tr("净值时间"));
+    model->setHeaderData(VALUATION_COL, Qt::Horizontal, QObject::tr("盘中估值"));
+    model->setHeaderData(VALUATION_GAINS_COL, Qt::Horizontal, QObject::tr("估值涨跌"));
+    model->setHeaderData(VALUATION_TIME_COL, Qt::Horizontal, QObject::tr("估值时间"));
+    model->setHeaderData(EXPECTED_EARNINGS_COL, Qt::Horizontal, QObject::tr("预计收益"));
+    model->setHeaderData(REMARKS_COL, Qt::Horizontal, QObject::tr("备注"));
 }
