@@ -7,24 +7,25 @@
 
 /*
  * 持仓表字段说明
- * ---20210620---
- *  0. id                    自增主键标识 INT *
- *  1. code                  基金代码    NVARCHAR *
- *  2. name                  基金名称    NVARCHAR *
- *  3. holding_unit_cost     持仓成本    DOUBLE *
- *  4. holding_share         持有份额    DOUBLE *
- *  5. holding_total_cost    成本金额    DOUBLE *
- *  6. holding_earnings      持有收益    DOUBLE *
- *  7. holding_earning_rate  持有收益率  DOUBLE *
- *  8. holding_amount        持有金额    DOUBLE *
- *  9. nav                   单位净值    DOUBLE
- * 10. nav_gains             净值涨跌    DOUBLE
- * 11. nav_time              净值时间    NVARCHAR
- * 12. valuation             盘中估值    DOUBLE
- * 13. valuation_gains       估值涨跌    DOUBLE
- * 14. valuation_time        估值时间    NVARCHAR
- * 15. expected_earnings     预计收益    DOUBLE
- * 16. remarks               备注       NVARCHAR
+ * ---20210624---
+ *  0. id                    自增主键标识 INT
+ *  1. order_id              显示顺序    INT NOT NULL
+ *  2. code                  基金代码    NVARCHAR *
+ *  3. name                  基金名称    NVARCHAR *
+ *  4. holding_unit_cost     持仓成本    DOUBLE *
+ *  5. holding_share         持有份额    DOUBLE *
+ *  6. holding_total_cost    成本金额    DOUBLE *
+ *  7. holding_earnings      持有收益    DOUBLE *
+ *  8. holding_earning_rate  持有收益率  DOUBLE *
+ *  9. holding_amount        持有金额    DOUBLE *
+ * 10. nav                   单位净值    DOUBLE
+ * 11. nav_gains             净值涨跌    DOUBLE
+ * 12. nav_time              净值时间    NVARCHAR
+ * 13. valuation             盘中估值    DOUBLE
+ * 14. valuation_gains       估值涨跌    DOUBLE
+ * 15. valuation_time        估值时间    NVARCHAR
+ * 16. expected_earnings     预计收益    DOUBLE
+ * 17. remarks               备注       NVARCHAR
  */
 
 class FundInfo : public QObject {
@@ -37,6 +38,10 @@ public:
     ~FundInfo() override = default;
 
     // GETTERS AND SETTERS
+    int get_order_id() const;
+
+    void set_order_id(int order_id);
+
     const QString &get_code() const;
 
     void set_code(const QString &code);
@@ -102,7 +107,7 @@ public:
     void set_remarks(const QString &remarks);
     // GETTERS AND SETTERS END
 
-    bool insert_new_record_to_database();
+    bool insert_new_record_to_database(int row = -1);
 
     bool refresh_and_save_record_changes_to_database(int row);
 
@@ -127,6 +132,7 @@ private:
 
 private:
     QSqlTableModel *model;
+    int order_id = 0;
     QString code = "";                // 基金代码（用户设定）
     QString name = "";                // 基金名称（接口获取）
     double holding_unit_cost = 0;     // 持仓成本（用户设定/设定后计算）

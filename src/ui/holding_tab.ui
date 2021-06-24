@@ -161,13 +161,6 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="stock_holdings_button">
-       <property name="text">
-        <string>持仓股票</string>
-       </property>
-      </widget>
-     </item>
-     <item>
       <widget class="QPushButton" name="new_button">
        <property name="text">
         <string>新建</string>

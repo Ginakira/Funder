@@ -3,27 +3,29 @@
 #include "./ui/ui_mainwindow.h"
 #include "include/database.h"
 #include "include/utility.h"
+#include "include/my_sql_table_model.h"
 
 MainWindow::MainWindow(QWidget *parent)
         : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
     networker = NetWorker::instance();
 
-    // 初始化设置信息
-    init_settings_info("Ginakira", "Funder");
-
     // 初始化数据库
     if (!init_db_connect()) {
         this->setEnabled(false);
         QMessageBox::critical(this, tr("错误"), tr("数据库初始化失败"));
     }
-    db_model = new QSqlTableModel(this);
+
+    db_model = new MySqlTableModel(this);
     db_model->setTable("holding");
     set_db_model_header_data(db_model);
     db_model->select();
     ui->statusbar->showMessage(tr("数据库初始化成功"), 1500);
 
-    holding_tab = new HoldingTab(this, db_model);
+    // 初始化设置信息
+    settings = new Settings(QCoreApplication::applicationDirPath() + "/settings.ini");
+
+    holding_tab = new HoldingTab(db_model, settings, this);
     ui->tab_widget->addTab(holding_tab, "持仓");
 
     connect(holding_tab, &HoldingTab::refresh_market, this, &MainWindow::refresh_market_info);

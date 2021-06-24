@@ -43,7 +43,7 @@ QVariant ProxyModel::data(const QModelIndex &index, int role) const {
                 index.column() == NAV_TIME_COL)
                && role == Qt::TextColorRole) {
         // 单位净值、净值时间颜色
-        QModelIndex nav_gains_index = sourceModel()->index(index.row(), 10);
+        QModelIndex nav_gains_index = sourceModel()->index(index.row(), NAV_GAINS_COL);
         double rate = sourceModel()->data(nav_gains_index).toDouble();
         if (rate < 0) {
             return QVariant::fromValue(QColor(Qt::darkGreen));
@@ -52,7 +52,7 @@ QVariant ProxyModel::data(const QModelIndex &index, int role) const {
         }
     } else if (index.column() == VALUATION_COL && role == Qt::TextColorRole) {
         // 盘中估值颜色
-        QModelIndex valuation_gains_index = sourceModel()->index(index.row(), 13);
+        QModelIndex valuation_gains_index = sourceModel()->index(index.row(), VALUATION_GAINS_COL);
         double rate = sourceModel()->data(valuation_gains_index).toDouble();
         if (rate < 0) {
             return QVariant::fromValue(QColor(Qt::darkGreen));

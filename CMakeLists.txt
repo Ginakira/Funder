@@ -46,7 +46,10 @@ set(PROJECT_SOURCES
         src/new_holding_dialog.cc
         include/fund_info.h
         src/fund_info.cc
-        src/proxy_model.cc include/proxy_model.h)
+        src/proxy_model.cc
+        include/proxy_model.h
+        src/my_sql_table_model.cc
+        include/my_sql_table_model.h src/settings.cc include/settings.h)
 
 if (${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(Funder

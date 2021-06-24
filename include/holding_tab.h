@@ -4,6 +4,7 @@
 #include <QSqlTableModel>
 #include <QWidget>
 #include "include/proxy_model.h"
+#include "include/settings.h"
 
 namespace Ui {
 class HoldingTab;
@@ -13,8 +14,7 @@ class HoldingTab : public QWidget {
 Q_OBJECT
 
 public:
-    explicit HoldingTab(QWidget *parent = nullptr,
-                        QSqlTableModel *db_model = nullptr);
+    explicit HoldingTab(QSqlTableModel *db_model, Settings *settings, QWidget *parent = nullptr);
 
     void refresh_records();
 
@@ -41,6 +41,7 @@ private:
     Ui::HoldingTab *ui;
     QSqlTableModel *db_model;
     ProxyModel *proxy_model;
+    Settings *settings;
 };
 
 #endif // HOLDINGTAB_H

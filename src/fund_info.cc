@@ -15,6 +15,14 @@ FundInfo::FundInfo(QSqlTableModel *model, const QSqlRecord &record, QObject *par
     set_info_from_record(record);
 }
 
+int FundInfo::get_order_id() const {
+    return order_id;
+}
+
+void FundInfo::set_order_id(int order_id) {
+    FundInfo::order_id = order_id;
+}
+
 const QString &FundInfo::get_code() const {
     return code;
 }
@@ -245,6 +253,7 @@ bool FundInfo::calculate_other_info() {
 QSqlRecord FundInfo::save_to_record() {
     QSqlRecord record = model->record();
     record.setGenerated(ID_KEY, false);
+    record.setValue(ORDER_ID_KEY, model->rowCount() + 1);
     record.setValue(CODE_KEY, code);
     record.setValue(NAME_KEY, name);
     record.setValue(HOLDING_UNIT_COST_KEY, holding_unit_cost);
@@ -289,6 +298,7 @@ bool FundInfo::save_to_record(QSqlRecord &record) {
 }
 
 void FundInfo::set_info_from_record(const QSqlRecord &record) {
+    order_id = record.value(ORDER_ID_KEY).toInt();
     code = record.value(CODE_KEY).toString();
     name = record.value(NAME_KEY).toString();
     holding_unit_cost = record.value(HOLDING_UNIT_COST_KEY).toDouble();
@@ -307,11 +317,11 @@ void FundInfo::set_info_from_record(const QSqlRecord &record) {
     remarks = record.value(REMARKS_KEY).toString();
 }
 
-bool FundInfo::insert_new_record_to_database() {
+bool FundInfo::insert_new_record_to_database(int row) {
     refresh_fund_info();
     calculate_other_info();
     QSqlRecord record = save_to_record();
-    if (!model->insertRecord(-1, record)) {
+    if (!model->insertRecord(row, record)) {
         QMessageBox::critical(nullptr, tr("基金新增失败"),
                               model->lastError().text());
         qDebug() << model->lastError();

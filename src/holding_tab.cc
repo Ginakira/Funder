@@ -11,8 +11,8 @@
 #include "include/database.h"
 #include "include/utility.h"
 
-HoldingTab::HoldingTab(QWidget *parent, QSqlTableModel *db_model)
-        : QWidget(parent), ui(new Ui::HoldingTab), db_model(db_model) {
+HoldingTab::HoldingTab(QSqlTableModel *db_model, Settings *settings, QWidget *parent)
+        : ui(new Ui::HoldingTab), db_model(db_model), settings(settings), QWidget(parent) {
     ui->setupUi(this);
 
     // 创建并设置代理模型
@@ -52,12 +52,17 @@ void HoldingTab::new_record() {
                 fund.insert_new_record_to_database();
                 ui->holding_table_view->scrollToBottom();
                 ui->holding_table_view->resizeColumnsToContents();
+
+                calculate_summary_info();
             });
     dialog.exec();
 }
 
 void HoldingTab::delete_record() {
     QModelIndex selected_index = ui->holding_table_view->currentIndex();
+    QModelIndex deleted_order_index = db_model->index(selected_index.row(), ORDER_ID_COL);
+    int deleted_order = db_model->data(deleted_order_index).toInt();
+
     if (QMessageBox::question(this, tr("删除"),
                               tr("您确定要删除这条记录吗？"))
         & (QMessageBox::No | QMessageBox::Escape)) {
@@ -68,8 +73,20 @@ void HoldingTab::delete_record() {
         QMessageBox::critical(this, tr("删除失败"),
                               db_model->lastError().text());
         qDebug() << db_model->lastError();
+        return;
+    }
+    // 修改order_id
+    for (int i = 0; i < db_model->rowCount(); ++i) {
+        QModelIndex order_index = db_model->index(i, ORDER_ID_COL);
+        int origin_order = db_model->data(order_index).toInt();
+        if (origin_order > deleted_order) {
+            db_model->setData(order_index, origin_order - 1);
+            db_model->submit();
+        }
     }
     db_model->select();
+
+    calculate_summary_info();
 }
 
 void HoldingTab::refresh_records() {
@@ -109,8 +126,12 @@ void HoldingTab::ui_init() {
     ui->holding_table_view->resizeColumnsToContents();
     ui->holding_table_view->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
+    // 设置根据Order_id列排序
+    ui->holding_table_view->sortByColumn(ORDER_ID_COL, Qt::AscendingOrder);
+
     // 隐藏列
     ui->holding_table_view->setColumnHidden(ID_COL, true);  // 隐藏ID列
+    ui->holding_table_view->setColumnHidden(ORDER_ID_COL, true);  // 隐藏顺序ID列
     ui->holding_table_view->setColumnHidden(HOLDING_AMOUNT_COL, true); // 隐藏持有金额
     ui->holding_table_view->setColumnHidden(VALUATION_TIME_COL, true); // 隐藏估值时间
 
@@ -122,20 +143,19 @@ void HoldingTab::ui_init() {
     ui->holding_table_view->horizontalHeader()->setSectionsMovable(true);
 
     // 设置行可移动顺序
-    ui->holding_table_view->verticalHeader()->setSectionsMovable(true);
-    ui->holding_table_view->verticalHeader()->setDragEnabled(true);
-    ui->holding_table_view->verticalHeader()->setDragDropMode(QAbstractItemView::InternalMove);
-    ui->holding_table_view->verticalHeader()->setAcceptDrops(true);
-
+    ui->holding_table_view->setDragEnabled(true);
+    ui->holding_table_view->setDragDropMode(QAbstractItemView::InternalMove);
+    ui->holding_table_view->setDefaultDropAction(Qt::MoveAction);
     // 从设置中恢复列（表头）状态
-    QByteArray horizontal_state = load_horizontal_header_state_to_settings();
+    QByteArray horizontal_state = settings->load_horizontal_header_state_to_settings();
     if (!horizontal_state.isEmpty()) {
         ui->holding_table_view->horizontalHeader()->restoreState(horizontal_state);
     }
 }
 
 void HoldingTab::save_horizontal_state() {
-    save_horizontal_header_state_to_settings(ui->holding_table_view->horizontalHeader()->saveState());
+    QByteArray state = ui->holding_table_view->horizontalHeader()->saveState();
+    settings->save_horizontal_header_state_to_settings(state);
 }
 
 // 计算按钮上方的汇总信息
