@@ -318,7 +318,9 @@ void FundInfo::set_info_from_record(const QSqlRecord &record) {
 }
 
 bool FundInfo::insert_new_record_to_database(int row) {
-    refresh_fund_info();
+    if (!refresh_fund_info()) {
+        QMessageBox::critical(nullptr, tr("基金新增失败"), tr("基金信息获取失败！请检查网络连接或基金代码是否正确"));
+    }
     calculate_other_info();
     QSqlRecord record = save_to_record();
     if (!model->insertRecord(row, record)) {
@@ -330,7 +332,11 @@ bool FundInfo::insert_new_record_to_database(int row) {
 }
 
 bool FundInfo::refresh_and_save_record_changes_to_database(int row) {
-    refresh_fund_info();
+    if (!refresh_fund_info()) {
+        if (!refresh_fund_info()) {
+            QMessageBox::critical(nullptr, tr("更新失败"), tr("基金信息获取失败！请检查网络连接或基金代码是否正确"));
+        }
+    }
     calculate_other_info();
     QSqlRecord record = model->record(row);
     save_to_record(record);

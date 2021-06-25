@@ -9,11 +9,15 @@ NewHoldingDialog::NewHoldingDialog(QWidget *parent, bool edit_mode,
         : QDialog(parent), ui(new Ui::NewHoldingDialog) {
     ui->setupUi(this);
 
+    setWindowTitle(edit_mode ? tr("编辑基金信息") : tr("新增基金信息"));
+
+    // 填充文本框
     ui->code_edit->setText(code);
     ui->holding_unit_cost_edit->setText(QString::number(holding_unit_cost));
     ui->holding_share_edit->setText(QString::number(holding_share));
     ui->remarks_edit->setText(remarks);
 
+    // 编辑模式禁用基金代码框
     if (edit_mode) {
         ui->code_edit->setEnabled(false);
     }

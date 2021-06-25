@@ -30,6 +30,7 @@ HoldingTab::HoldingTab(QSqlTableModel *db_model, Settings *settings, QWidget *pa
             &HoldingTab::new_record);
     connect(ui->delete_button, &QPushButton::clicked, this,
             &HoldingTab::delete_record);
+    connect(ui->edit_button, &QPushButton::clicked, this, &HoldingTab::edit_record);
 
     // 表头列移动、改变大小时存储state到设置中 以便下次启动恢复顺序
     connect(ui->holding_table_view->horizontalHeader(), &QHeaderView::sectionMoved, this,
@@ -90,6 +91,35 @@ void HoldingTab::delete_record() {
 
     calculate_summary_info();
 }
+
+
+void HoldingTab::edit_record() {
+    QModelIndex selected_index = ui->holding_table_view->currentIndex();
+    if (!selected_index.isValid()) {
+        return;
+    }
+    FundInfo fund(db_model, db_model->record(selected_index.row()));
+
+    NewHoldingDialog dialog(this, true,
+                            fund.get_code(),
+                            fund.get_holding_unit_cost(),
+                            fund.get_holding_share(),
+                            fund.get_remarks());
+    connect(&dialog, &NewHoldingDialog::modified_record, this,
+            [&](const QString &code, double holding_unit_cost,
+                double holding_share, const QString &remarks) {
+
+                fund.set_code(code);
+                fund.set_holding_unit_cost(holding_unit_cost);
+                fund.set_holding_share(holding_share);
+                fund.set_remarks(remarks);
+                fund.refresh_and_save_record_changes_to_database(selected_index.row());
+
+                calculate_summary_info();
+            });
+    dialog.exec();
+}
+
 
 void HoldingTab::refresh_records() {
     int rows = db_model->rowCount();

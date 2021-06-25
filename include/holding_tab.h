@@ -30,6 +30,8 @@ private slots:
 
     void delete_record();
 
+    void edit_record();
+
     void calculate_summary_info();
 
     void save_horizontal_state();
