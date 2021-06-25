@@ -51,7 +51,6 @@ void HoldingTab::new_record() {
                 fund.set_remarks(remarks);
                 fund.insert_new_record_to_database();
                 ui->holding_table_view->scrollToBottom();
-                ui->holding_table_view->resizeColumnsToContents();
 
                 calculate_summary_info();
             });
@@ -107,8 +106,6 @@ void HoldingTab::refresh_records() {
         ui->update_progress_bar->setValue((i + 1) * per_percent);
     }
 
-    ui->holding_table_view->resizeColumnsToContents();
-
     ui->update_label->hide();
     ui->update_progress_bar->hide();
 
@@ -123,7 +120,6 @@ void HoldingTab::ui_init() {
     ui->holding_table_view->setSelectionMode(
             QAbstractItemView::SingleSelection);
     ui->holding_table_view->setSelectionBehavior(QAbstractItemView::SelectRows);
-    ui->holding_table_view->resizeColumnsToContents();
     ui->holding_table_view->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
     // 设置根据Order_id列排序
