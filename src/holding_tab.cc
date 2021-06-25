@@ -22,6 +22,7 @@ HoldingTab::HoldingTab(QSqlTableModel *db_model, Settings *settings, QWidget *pa
 
     ui_init();
 
+    // 功能按钮信号槽绑定
     connect(ui->refresh_button, &QPushButton::clicked, this,
             &HoldingTab::refresh_market);
     connect(ui->refresh_button, &QPushButton::clicked, this, &HoldingTab::refresh_records);
@@ -30,8 +31,10 @@ HoldingTab::HoldingTab(QSqlTableModel *db_model, Settings *settings, QWidget *pa
     connect(ui->delete_button, &QPushButton::clicked, this,
             &HoldingTab::delete_record);
 
-    // 表头列移动时存储state到设置中 以便下次启动恢复顺序
+    // 表头列移动、改变大小时存储state到设置中 以便下次启动恢复顺序
     connect(ui->holding_table_view->horizontalHeader(), &QHeaderView::sectionMoved, this,
+            &HoldingTab::save_horizontal_state);
+    connect(ui->holding_table_view->horizontalHeader(), &QHeaderView::sectionResized, this,
             &HoldingTab::save_horizontal_state);
 }
 
