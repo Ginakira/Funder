@@ -63,6 +63,10 @@ void HoldingTab::new_record() {
 
 void HoldingTab::delete_record() {
     QModelIndex selected_index = ui->holding_table_view->currentIndex();
+    if (!selected_index.isValid()) {
+        return;
+    }
+
     QModelIndex deleted_order_index = db_model->index(selected_index.row(), ORDER_ID_COL);
     int deleted_order = db_model->data(deleted_order_index).toInt();
 
