@@ -69,17 +69,17 @@ bool init_db_connect() {
 void set_db_model_header_data(QSqlTableModel *model) {
     model->setHeaderData(CODE_COL, Qt::Horizontal, QObject::tr("基金代码"));
     model->setHeaderData(NAME_COL, Qt::Horizontal, QObject::tr("基金名称"));
-    model->setHeaderData(HOLDING_UNIT_COST_COL, Qt::Horizontal, QObject::tr("持仓成本"));
-    model->setHeaderData(HOLDING_SHARE_COL, Qt::Horizontal, QObject::tr("持有份额"));
-    model->setHeaderData(HOLDING_TOTAL_COST_COL, Qt::Horizontal, QObject::tr("成本金额"));
-    model->setHeaderData(HOLDING_EARNINGS_COL, Qt::Horizontal, QObject::tr("持有收益"));
+    model->setHeaderData(HOLDING_UNIT_COST_COL, Qt::Horizontal, QObject::tr("成本价"));
+    model->setHeaderData(HOLDING_SHARE_COL, Qt::Horizontal, QObject::tr("份额"));
+    model->setHeaderData(HOLDING_TOTAL_COST_COL, Qt::Horizontal, QObject::tr("本金"));
+    model->setHeaderData(HOLDING_EARNINGS_COL, Qt::Horizontal, QObject::tr("盈亏"));
     model->setHeaderData(HOLDING_EARNING_RATE_COL, Qt::Horizontal, QObject::tr("收益率"));
     model->setHeaderData(HOLDING_AMOUNT_COL, Qt::Horizontal, QObject::tr("持有金额"));
-    model->setHeaderData(NAV_COL, Qt::Horizontal, QObject::tr("单位净值"));
-    model->setHeaderData(NAV_GAINS_COL, Qt::Horizontal, QObject::tr("净值涨跌"));
+    model->setHeaderData(NAV_COL, Qt::Horizontal, QObject::tr("净值"));
+    model->setHeaderData(NAV_GAINS_COL, Qt::Horizontal, QObject::tr("收盘"));
     model->setHeaderData(NAV_TIME_COL, Qt::Horizontal, QObject::tr("净值时间"));
-    model->setHeaderData(VALUATION_COL, Qt::Horizontal, QObject::tr("盘中估值"));
-    model->setHeaderData(VALUATION_GAINS_COL, Qt::Horizontal, QObject::tr("估值涨跌"));
+    model->setHeaderData(VALUATION_COL, Qt::Horizontal, QObject::tr("估值"));
+    model->setHeaderData(VALUATION_GAINS_COL, Qt::Horizontal, QObject::tr("涨幅"));
     model->setHeaderData(VALUATION_TIME_COL, Qt::Horizontal, QObject::tr("估值时间"));
     model->setHeaderData(EXPECTED_EARNINGS_COL, Qt::Horizontal, QObject::tr("预计收益"));
     model->setHeaderData(REMARKS_COL, Qt::Horizontal, QObject::tr("备注"));

@@ -5,6 +5,8 @@
 #include "include/proxy_model.h"
 
 #include <QColor>
+#include <QDate>
+#include <QDebug>
 
 #include "include/database.h"
 
@@ -42,8 +44,7 @@ QVariant ProxyModel::data(const QModelIndex &index, int role) const {
                 return QVariant::fromValue(QColor(Qt::red));
             }
         }
-    } else if (col == HOLDING_EARNINGS_COL
-               || col == EXPECTED_EARNINGS_COL) { // 持仓收益列、预期收益列
+    } else if (col == HOLDING_EARNINGS_COL) { // 持仓收益列列
         if (role == Qt::DisplayRole) { // 保留两位
             double rate = sourceModel()->data(index).toDouble();
             return QString("%1%2").
@@ -95,9 +96,45 @@ QVariant ProxyModel::data(const QModelIndex &index, int role) const {
         if (role == Qt::DisplayRole) { // 保留整数
             return QString::number(sourceModel()->data(index).toDouble(), 'f', 0);
         }
-    } else if (col == REMARKS_COL) {
-        if (role == Qt::ToolTipRole) {
+    } else if (col == REMARKS_COL) { // 备注列
+        if (role == Qt::ToolTipRole) { // 鼠标悬停提示
             return sourceModel()->data(index).toString();
+        }
+    } else if (col == EXPECTED_EARNINGS_COL) { // 预计收益列
+        const QModelIndex nav_time_index = sourceModel()->index(index.row(), NAV_TIME_COL);
+        const QModelIndex valuation_time_index = sourceModel()->index(index.row(), VALUATION_TIME_COL);
+        QDate nav_date = QDate::fromString(sourceModel()->data(nav_time_index).toString(), "yyyy-MM-dd");
+        QDate valuation_date = QDate::fromString(sourceModel()->data(valuation_time_index).toString().mid(0, 10),
+                                                 "yyyy-MM-dd");
+        double rate = 0;
+        bool settled = false; // 是否已结算
+        if (nav_date >= valuation_date) { // 已结算
+            settled = true;
+            const QModelIndex nav_index = sourceModel()->index(index.row(), NAV_COL);
+            const QModelIndex nav_gains_index = sourceModel()->index(index.row(), NAV_GAINS_COL);
+            const QModelIndex holding_share_index = sourceModel()->index(index.row(), HOLDING_SHARE_COL);
+            double nav = sourceModel()->data(nav_index).toDouble();
+            double nav_gains = sourceModel()->data(nav_gains_index).toDouble() / 100;
+            double holding_share = sourceModel()->data(holding_share_index).toDouble();
+            rate = holding_share * (nav / (1 + nav_gains) * nav_gains);
+        } else {
+            rate = sourceModel()->data(index).toDouble();
+        }
+        if (role == Qt::DisplayRole) { // 保留两位
+            if (settled) {
+                return QString("已结算：%1%2").arg(rate >= 0 ? "+" : "",
+                                               QString::number(rate, 'f', 2));
+            } else {
+                return QString("%1%2").
+                        arg(rate >= 0 ? "+" : "",
+                            QString::number(rate, 'f', 2));
+            }
+        } else if (role == Qt::TextColorRole) { //颜色
+            if (rate < 0) {
+                return QVariant::fromValue(QColor(Qt::darkGreen));
+            } else {
+                return QVariant::fromValue(QColor(Qt::red));
+            }
         }
     }
     return QIdentityProxyModel::data(index, role);

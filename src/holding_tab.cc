@@ -4,6 +4,7 @@
 #include <QMessageBox>
 #include <QSqlError>
 #include <QSqlRecord>
+#include <QDate>
 
 #include "./ui/ui_holding_tab.h"
 #include "include/new_holding_dialog.h"
@@ -37,6 +38,29 @@ HoldingTab::HoldingTab(QSqlTableModel *db_model, Settings *settings, QWidget *pa
             &HoldingTab::save_horizontal_state);
     connect(ui->holding_table_view->horizontalHeader(), &QHeaderView::sectionResized, this,
             &HoldingTab::save_horizontal_state);
+
+    // 右键菜单
+    ui->holding_table_view->setContextMenuPolicy(Qt::CustomContextMenu);
+
+    context_menu = new QMenu(this);
+    buy_action = new QAction(tr("加仓"), this);
+    sell_action = new QAction(tr("减仓"), this);
+    nav_history_action = new QAction(tr("历史净值"), this);
+    context_menu->addAction(buy_action);
+    context_menu->addAction(sell_action);
+    context_menu->addAction(nav_history_action);
+
+    connect(ui->holding_table_view,
+            &QTableView::customContextMenuRequested,
+            this,
+            &HoldingTab::context_menu_slot);
+
+    connect(buy_action,
+            &QAction::triggered,
+            this,
+            [=]() {
+                qDebug() << ui->holding_table_view->currentIndex().row();
+            });
 }
 
 HoldingTab::~HoldingTab() {
@@ -198,17 +222,40 @@ void HoldingTab::calculate_summary_info() {
     double total_earnings = 0; // 持有总收益
     double total_holding_amount = 0; // 持有总金额
     double total_expected_earnings = 0; // 预期未结算总收益
+    double total_settled_earnings = 0; // 已结算总收益
+    bool settled = false; // 是否有已结算的基金
+
+    ui->settled_earnings_text_label->hide();
+    ui->settled_earnings_label->hide();
+
     for (int i = 0; i < rows; ++i) {
         QSqlRecord record = db_model->record(i);
         total_cost += record.value(HOLDING_TOTAL_COST_KEY).toDouble();
         total_earnings += record.value(HOLDING_EARNINGS_KEY).toDouble();
         total_holding_amount += record.value(HOLDING_AMOUNT_KEY).toDouble();
-        total_expected_earnings += record.value(EXPECTED_EARNINGS_KEY).toDouble();
+
+        // 判断是否已结算
+        QDate nav_date = QDate::fromString(record.value(NAV_TIME_KEY).toString(), "yyyy-MM-dd");
+        QDate valuation_date = QDate::fromString(record.value(VALUATION_TIME_KEY).toString().mid(0, 10),
+                                                 "yyyy-MM-dd"); // 只取前10个字符 只要年月日
+        if (nav_date >= valuation_date) { // 已结算
+            settled = true;
+            double nav = record.value(NAV_KEY).toDouble();
+            double nav_gains = record.value(NAV_GAINS_KEY).toDouble() / 100;
+            double holding_share = record.value(HOLDING_SHARE_KEY).toDouble();
+            total_settled_earnings += holding_share * (nav / (1 + nav_gains) * nav_gains);
+        } else {
+            total_expected_earnings += record.value(EXPECTED_EARNINGS_KEY).toDouble();
+        }
     }
     ui->total_cost_label->setText(QString::number(total_cost, 'f', 0));
     ui->total_earnings_label->setText(QString::number(total_earnings, 'f', 2));
     ui->total_holding_amount_label->setText(QString::number(total_holding_amount, 'f', 2));
     ui->total_expected_earnings_label->setText(QString::number(total_expected_earnings, 'f', 2));
+    // 已结算收益
+    ui->settled_earnings_label->setHidden(!settled);
+    ui->settled_earnings_text_label->setHidden(!settled);
+    ui->settled_earnings_label->setText(QString::number(total_settled_earnings, 'f', 2));
 
     // 设置颜色
     const QString red_color = "color: red";
@@ -217,4 +264,14 @@ void HoldingTab::calculate_summary_info() {
     ui->total_earnings_label->setStyleSheet(total_earnings >= 0 ? red_color : green_color);
     ui->total_holding_amount_label->setStyleSheet(total_earnings >= 0 ? red_color : green_color);
     ui->total_expected_earnings_label->setStyleSheet(total_expected_earnings >= 0 ? red_color : green_color);
+    ui->settled_earnings_label->setStyleSheet(total_settled_earnings >= 0 ? red_color : green_color);
+}
+
+void HoldingTab::context_menu_slot(const QPoint &pos) {
+    QModelIndex index = ui->holding_table_view->indexAt(pos); //获取鼠标点击位置项的索引
+    if (index.isValid()) { //数据项是否有效，空白处点击无菜单
+        context_menu->exec(QCursor::pos());//数据项有效才显示菜单
+    } else {
+        ui->holding_table_view->clearSelection();
+    }
 }

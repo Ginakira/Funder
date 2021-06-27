@@ -3,6 +3,9 @@
 
 #include <QSqlTableModel>
 #include <QWidget>
+#include <QAction>
+#include <QMenu>
+
 #include "include/proxy_model.h"
 #include "include/settings.h"
 
@@ -36,9 +39,15 @@ private slots:
 
     void save_horizontal_state();
 
+    void context_menu_slot(const QPoint &pos);
+
 private:
     void ui_init();
 
+    QMenu *context_menu;
+    QAction *buy_action;
+    QAction *sell_action;
+    QAction *nav_history_action;
 
     Ui::HoldingTab *ui;
     QSqlTableModel *db_model;
