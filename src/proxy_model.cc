@@ -29,9 +29,8 @@ QVariant ProxyModel::data(const QModelIndex &index, int role) const {
                 return QVariant::fromValue(QColor(Qt::red));
             }
         }
-    } else if (col == HOLDING_EARNING_RATE_COL ||
-               col == NAV_GAINS_COL ||
-               col == VALUATION_GAINS_COL) { // 持有收益率、净值涨跌、估值涨跌列
+    } else if (col == NAV_GAINS_COL ||
+               col == VALUATION_GAINS_COL) { // 净值涨跌、估值涨跌列
         if (role == Qt::DisplayRole) { // 正负号、百分号、保留两位
             double rate = sourceModel()->data(index).toDouble();
             return QString("%1%2%").arg(rate >= 0 ? "+" : "",
@@ -47,11 +46,7 @@ QVariant ProxyModel::data(const QModelIndex &index, int role) const {
     } else if (col == HOLDING_EARNINGS_COL) { // 持仓收益列列
         if (role == Qt::DisplayRole) { // 保留两位
             double rate = sourceModel()->data(index).toDouble();
-            return QString("%1%2").
-                    arg(rate
-                        >= 0 ? "+" : "",
-                        QString::number(rate,
-                                        'f', 2));
+            return QString::number(rate, 'f', 2);
         } else if (role == Qt::TextColorRole) { //颜色
             double rate = sourceModel()->data(index).toDouble();
             if (rate < 0) {
@@ -136,18 +131,18 @@ QVariant ProxyModel::data(const QModelIndex &index, int role) const {
                 return QVariant::fromValue(QColor(Qt::red));
             }
         }
+    } else if (col == HOLDING_EARNING_RATE_COL) { // 持有收益率列
+        if (role == Qt::DisplayRole) { // 百分号、保留两位
+            double rate = sourceModel()->data(index).toDouble();
+            return QString::number(rate, 'f', 2) + "%";
+        } else if (role == Qt::TextColorRole) { // 颜色
+            double rate = sourceModel()->data(index).toDouble();
+            if (rate < 0) {
+                return QVariant::fromValue(QColor(Qt::darkGreen));
+            } else {
+                return QVariant::fromValue(QColor(Qt::red));
+            }
+        }
     }
     return QIdentityProxyModel::data(index, role);
 }
-
-//QVariant ProxyModel::data(const QModelIndex &index, int role) const {
-
-
-//
-//    } else if ((index.column() == HOLDING_TOTAL_COST_COL) && role == Qt::DisplayRole) {
-//        // 持有金额保留整数
-//        return QString::number(sourceModel()->data(index).toDouble(), 'f', 0);
-//    } else {
-//        return QIdentityProxyModel::data(index, role);
-//    }
-//}
