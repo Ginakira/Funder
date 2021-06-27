@@ -68,6 +68,29 @@ else ()
     endif ()
 endif ()
 
+# Windows下编译隐藏console
+if (WIN32)
+    if (MSVC)
+        set_target_properties(Funder PROPERTIES
+                WIN32_EXECUTABLE YES
+                LINK_FLAGS "/ENTRY:mainCRTStartup"
+                )
+    elseif (CMAKE_COMPILER_IS_GNUCXX)
+        SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mwindows") # Not tested
+    else ()
+        message(SEND_ERROR "You are using an unsupported Windows compiler! (Not MSVC or GCC)")
+    endif (MSVC)
+elseif (APPLE)
+    set_target_properties(Funder PROPERTIES
+            MACOSX_BUNDLE YES
+            )
+elseif (UNIX)
+    # Nothing special required
+else ()
+    message(SEND_ERROR "You are on an unsupported platform! (Not Win32, Mac OS X or Unix)")
+endif (WIN32)
+
+
 target_link_libraries(Funder PRIVATE
         Qt${QT_VERSION_MAJOR}::Widgets
         Qt${QT_VERSION_MAJOR}::Network
