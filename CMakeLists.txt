@@ -55,6 +55,9 @@ set(PROJECT_SOURCES
         include/buy_dialog.h
         src/buy_dialog.cc
         src/ui/buy_dialog.ui
+        include/sell_dialog.h
+        src/sell_dialog.cc
+        src/ui/sell_dialog.ui
         )
 
 # 应用图标相关

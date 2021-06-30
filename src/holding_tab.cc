@@ -6,6 +6,7 @@
 #include <QSqlRecord>
 #include <QDate>
 #include <include/buy_dialog.h>
+#include <include/sell_dialog.h>
 
 #include "./ui/ui_holding_tab.h"
 #include "include/new_holding_dialog.h"
@@ -285,8 +286,8 @@ void HoldingTab::buy_fund() {
     // 从设置中读取保存的买入手续费
     double stored_service_charge = settings->load_buy_service_charge(fund.get_code());
 
-    BuyDialog dialog(record.value(CODE_KEY).toString(),
-                     record.value(NAME_KEY).toString(),
+    BuyDialog dialog(fund.get_code(),
+                     fund.get_name(),
                      fund.get_nav(),
                      stored_service_charge,
                      this);
@@ -309,13 +310,33 @@ void HoldingTab::buy_fund() {
                 fund.refresh_and_save_record_changes_to_database(index.row());
 
                 calculate_summary_info();
-
             });
     dialog.exec();
 }
 
 void HoldingTab::sell_fund() {
+    QModelIndex index = ui->holding_table_view->currentIndex();
+    if (!index.isValid()) {
+        return;
+    }
+    QSqlRecord record = db_model->record(index.row());
+    FundInfo fund(db_model, record);
+    fund.refresh_and_save_record_changes_to_database(index.row());
 
+    SellDialog dialog(fund.get_code(), fund.get_name(), fund.get_holding_share(), this);
+
+    connect(&dialog, &SellDialog::sell_confirmed, this, [=, &fund](double sell_share) {
+        double holding_share = fund.get_holding_share() - sell_share; // 减仓后总份额
+        double holding_amount = fund.get_holding_amount() - (fund.get_nav() * sell_share); // 减仓后总持仓金额
+        double holding_unit_cost = holding_amount / holding_share;
+        fund.set_holding_share(holding_share);
+        fund.set_holding_amount(holding_amount);
+        fund.set_holding_unit_cost(holding_unit_cost);
+        fund.refresh_and_save_record_changes_to_database(index.row());
+
+        calculate_summary_info();
+    });
+    dialog.exec();
 }
 
 
