@@ -49,7 +49,13 @@ set(PROJECT_SOURCES
         src/proxy_model.cc
         include/proxy_model.h
         src/my_sql_table_model.cc
-        include/my_sql_table_model.h src/settings.cc include/settings.h)
+        include/my_sql_table_model.h
+        src/settings.cc
+        include/settings.h
+        include/buy_dialog.h
+        src/buy_dialog.cc
+        src/ui/buy_dialog.ui
+        )
 
 if (${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(Funder

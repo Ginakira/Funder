@@ -21,7 +21,8 @@
 #define VALUATION_GAINS_COL 14     // 估值涨跌
 #define VALUATION_TIME_COL 15      // 估值时间
 #define EXPECTED_EARNINGS_COL 16   // 预计收益
-#define REMARKS_COL 17 // 备注
+#define REMARKS_COL 17             // 备注
+#define SETTLED_COL 18             // 是否已结算
 
 #define ID_KEY "id"                                      // ID
 #define ORDER_ID_KEY "order_id"                         // 显示顺序ID
@@ -40,11 +41,17 @@
 #define VALUATION_GAINS_KEY "valuation_gains"            // 估值涨跌
 #define VALUATION_TIME_KEY "valuation_time"              // 估值时间
 #define EXPECTED_EARNINGS_KEY "expected_earnings"        // 预计收益
+#define SETTLED_KEY "settled"                            // 是否已结算
 #define REMARKS_KEY "remarks"                            // 备注
-
 
 bool init_db_connect();
 
 void set_db_model_header_data(QSqlTableModel *model);
+
+int get_holding_table_rows();
+
+bool create_table();
+
+bool alter_table();
 
 #endif // DATABASE_H

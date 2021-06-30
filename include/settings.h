@@ -17,6 +17,10 @@ public:
 
     QByteArray load_horizontal_header_state_to_settings();
 
+    void save_buy_service_charge(const QString &code, double service_charge);
+
+    double load_buy_service_charge(const QString &code);
+
 private:
     QSettings *m_settings;
 };

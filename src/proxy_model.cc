@@ -96,26 +96,10 @@ QVariant ProxyModel::data(const QModelIndex &index, int role) const {
             return sourceModel()->data(index).toString();
         }
     } else if (col == EXPECTED_EARNINGS_COL) { // 预计收益列
-        const QModelIndex nav_time_index = sourceModel()->index(index.row(), NAV_TIME_COL);
-        const QModelIndex valuation_time_index = sourceModel()->index(index.row(), VALUATION_TIME_COL);
-        QDate nav_date = QDate::fromString(sourceModel()->data(nav_time_index).toString(), "yyyy-MM-dd");
-        QDate valuation_date = QDate::fromString(sourceModel()->data(valuation_time_index).toString().mid(0, 10),
-                                                 "yyyy-MM-dd");
-        double rate = 0;
-        bool settled = false; // 是否已结算
-        if (nav_date >= valuation_date) { // 已结算
-            settled = true;
-            const QModelIndex nav_index = sourceModel()->index(index.row(), NAV_COL);
-            const QModelIndex nav_gains_index = sourceModel()->index(index.row(), NAV_GAINS_COL);
-            const QModelIndex holding_share_index = sourceModel()->index(index.row(), HOLDING_SHARE_COL);
-            double nav = sourceModel()->data(nav_index).toDouble();
-            double nav_gains = sourceModel()->data(nav_gains_index).toDouble() / 100;
-            double holding_share = sourceModel()->data(holding_share_index).toDouble();
-            rate = holding_share * (nav / (1 + nav_gains) * nav_gains);
-        } else {
-            rate = sourceModel()->data(index).toDouble();
-        }
         if (role == Qt::DisplayRole) { // 保留两位
+            const QModelIndex settled_index = sourceModel()->index(index.row(), SETTLED_COL);
+            bool settled = sourceModel()->data(settled_index).toBool();
+            double rate = sourceModel()->data(index).toDouble();
             if (settled) {
                 return QString("已结算：%1%2").arg(rate >= 0 ? "+" : "",
                                                QString::number(rate, 'f', 2));
@@ -124,7 +108,8 @@ QVariant ProxyModel::data(const QModelIndex &index, int role) const {
                         arg(rate >= 0 ? "+" : "",
                             QString::number(rate, 'f', 2));
             }
-        } else if (role == Qt::TextColorRole) { //颜色
+        } else if (role == Qt::TextColorRole) { // 颜色
+            double rate = sourceModel()->data(index).toDouble();
             if (rate < 0) {
                 return QVariant::fromValue(QColor(Qt::darkGreen));
             } else {

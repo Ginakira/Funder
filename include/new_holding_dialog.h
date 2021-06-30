@@ -21,11 +21,11 @@ public:
 
 signals:
 
-    void modified_record(const QString &code, double holding_unit_cost,
-                         double holding_share, const QString &remarks);
+    void modified_fund(const QString &code, double holding_unit_cost,
+                       double holding_share, const QString &remarks);
 
 private:
-    void accepted_record();
+    void accepted_fund();
 
     Ui::NewHoldingDialog *ui;
 };

@@ -22,15 +22,15 @@ NewHoldingDialog::NewHoldingDialog(QWidget *parent, bool edit_mode,
         ui->code_edit->setEnabled(false);
     }
 
-    connect(this, &QDialog::accepted, this, &NewHoldingDialog::accepted_record);
+    connect(this, &QDialog::accepted, this, &NewHoldingDialog::accepted_fund);
 }
 
 NewHoldingDialog::~NewHoldingDialog() { delete ui; }
 
-void NewHoldingDialog::accepted_record() {
+void NewHoldingDialog::accepted_fund() {
     QString code = ui->code_edit->text();
     double holding_unit_cost = ui->holding_unit_cost_edit->text().toDouble();
     double holding_share = ui->holding_share_edit->text().toDouble();
     QString remarks = ui->remarks_edit->toPlainText();
-    emit modified_record(code, holding_unit_cost, holding_share, remarks);
+    emit modified_fund(code, holding_unit_cost, holding_share, remarks);
 }

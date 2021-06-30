@@ -4,6 +4,7 @@
 #include <QMessageBox>
 #include <QSqlRecord>
 #include <QSqlError>
+#include <QDate>
 
 #include "include/networker.h"
 #include "include/utility.h"
@@ -151,6 +152,14 @@ void FundInfo::set_remarks(const QString &remarks) {
     FundInfo::remarks = remarks;
 }
 
+bool FundInfo::get_settled() const {
+    return settled;
+}
+
+void FundInfo::set_settled(bool settled) {
+    FundInfo::settled = settled;
+}
+
 
 QVariantMap
 FundInfo::get_json_from_networker(const QString &url, const std::function<QString(const QString &)> &filter) {
@@ -232,8 +241,9 @@ bool FundInfo::get_nav_info() {
 }
 
 bool FundInfo::refresh_fund_info() {
-    bool ret = get_name_and_valuation_info() && get_nav_info();
-    return ret;
+    return get_name_and_valuation_info() &&
+           get_nav_info() &&
+           calculate_other_info();
 }
 
 bool FundInfo::calculate_other_info() {
@@ -246,30 +256,31 @@ bool FundInfo::calculate_other_info() {
         holding_earning_rate = holding_earnings / holding_total_cost * 100;
     }
     holding_amount = holding_total_cost + holding_earnings;
-    expected_earnings = (valuation - nav) * holding_share;
+
+    // 预期收益或已结算收益计算
+    QDate nav_date = QDate::fromString(nav_time, "yyyy-MM-dd");
+    QDate valuation_date = QDate::fromString(valuation_time.mid(0, 10), "yyyy-MM-dd");
+
+    // 如果已经记录的和当前均已处于结算状态，则不重新计算结算收益，防止结算后加仓时导致已结算收益变化
+    if (settled && nav_date >= valuation_date) {
+        return true;
+    } else {
+        // 未计算过是否已结算 则计算是否已结算
+        settled = (nav_date >= valuation_date);
+    }
+
+    if (settled) { // 计算已结算收益
+        expected_earnings = holding_share * (nav / (1 + nav_gains / 100) * (nav_gains / 100));
+    } else { // 未结算 计算预期收益
+        expected_earnings = (valuation - nav) * holding_share;
+    }
     return true;
 }
 
 QSqlRecord FundInfo::save_to_record() {
     QSqlRecord record = model->record();
-    record.setGenerated(ID_KEY, false);
+    save_to_record(record);
     record.setValue(ORDER_ID_KEY, model->rowCount() + 1);
-    record.setValue(CODE_KEY, code);
-    record.setValue(NAME_KEY, name);
-    record.setValue(HOLDING_UNIT_COST_KEY, holding_unit_cost);
-    record.setValue(HOLDING_SHARE_KEY, holding_share);
-    record.setValue(HOLDING_TOTAL_COST_KEY, holding_total_cost);
-    record.setValue(HOLDING_EARNINGS_KEY, holding_earnings);
-    record.setValue(HOLDING_EARNING_RATE_KEY, holding_earning_rate);
-    record.setValue(HOLDING_AMOUNT_KEY, holding_amount);
-    record.setValue(NAV_KEY, nav);
-    record.setValue(NAV_TIME_KEY, nav_time);
-    record.setValue(NAV_GAINS_KEY, nav_gains);
-    record.setValue(VALUATION_KEY, valuation);
-    record.setValue(VALUATION_GAINS_KEY, valuation_gains);
-    record.setValue(VALUATION_TIME_KEY, valuation_time);
-    record.setValue(EXPECTED_EARNINGS_KEY, expected_earnings);
-    record.setValue(REMARKS_KEY, remarks);
     return record;
 }
 
@@ -293,6 +304,7 @@ bool FundInfo::save_to_record(QSqlRecord &record) {
     record.setValue(VALUATION_GAINS_KEY, valuation_gains);
     record.setValue(VALUATION_TIME_KEY, valuation_time);
     record.setValue(EXPECTED_EARNINGS_KEY, expected_earnings);
+    record.setValue(SETTLED_KEY, settled);
     record.setValue(REMARKS_KEY, remarks);
     return true;
 }
@@ -314,6 +326,7 @@ void FundInfo::set_info_from_record(const QSqlRecord &record) {
     valuation_gains = record.value(VALUATION_GAINS_KEY).toDouble();
     valuation_time = record.value(VALUATION_TIME_KEY).toString();
     expected_earnings = record.value(EXPECTED_EARNINGS_KEY).toDouble();
+    settled = record.value(SETTLED_KEY).toBool();
     remarks = record.value(REMARKS_KEY).toString();
 }
 
@@ -333,9 +346,7 @@ bool FundInfo::insert_new_record_to_database(int row) {
 
 bool FundInfo::refresh_and_save_record_changes_to_database(int row) {
     if (!refresh_fund_info()) {
-        if (!refresh_fund_info()) {
-            QMessageBox::critical(nullptr, tr("更新失败"), tr("基金信息获取失败！请检查网络连接或基金代码是否正确"));
-        }
+        QMessageBox::critical(nullptr, tr("更新失败"), tr("基金信息获取失败！请检查网络连接或基金代码是否正确"));
     }
     calculate_other_info();
     QSqlRecord record = model->record(row);

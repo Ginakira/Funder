@@ -5,29 +5,6 @@
 #include <QVariantMap>
 #include <QSqlTableModel>
 
-/*
- * 持仓表字段说明
- * ---20210624---
- *  0. id                    自增主键标识 INT
- *  1. order_id              显示顺序    INT NOT NULL
- *  2. code                  基金代码    NVARCHAR *
- *  3. name                  基金名称    NVARCHAR *
- *  4. holding_unit_cost     持仓成本    DOUBLE *
- *  5. holding_share         持有份额    DOUBLE *
- *  6. holding_total_cost    成本金额    DOUBLE *
- *  7. holding_earnings      持有收益    DOUBLE *
- *  8. holding_earning_rate  持有收益率  DOUBLE *
- *  9. holding_amount        持有金额    DOUBLE *
- * 10. nav                   单位净值    DOUBLE
- * 11. nav_gains             净值涨跌    DOUBLE
- * 12. nav_time              净值时间    NVARCHAR
- * 13. valuation             盘中估值    DOUBLE
- * 14. valuation_gains       估值涨跌    DOUBLE
- * 15. valuation_time        估值时间    NVARCHAR
- * 16. expected_earnings     预计收益    DOUBLE
- * 17. remarks               备注       NVARCHAR
- */
-
 class FundInfo : public QObject {
 Q_OBJECT
 public:
@@ -105,6 +82,10 @@ public:
     const QString &get_remarks() const;
 
     void set_remarks(const QString &remarks);
+
+    bool get_settled() const;
+
+    void set_settled(bool settled);
     // GETTERS AND SETTERS END
 
     bool insert_new_record_to_database(int row = -1);
@@ -147,8 +128,9 @@ private:
     double valuation = 0;             // 盘中估值（接口获取）
     double valuation_gains = 0;       // 估值涨跌（接口获取）
     QString valuation_time = "";      // 估值时间（接口获取）
-    double expected_earnings = 0;     // 预计收益（接口获取后计算）
-    QString remarks = ""; // 备注（用户设定）
+    double expected_earnings = 0;     // 预计收益 / 如已结算则为结算收益（接口获取后计算）
+    QString remarks = "";             // 备注（用户设定）
+    bool settled = false;             // 是否已结算（相关逻辑自动设置）
 };
 
 #endif // FUNDINFO_H

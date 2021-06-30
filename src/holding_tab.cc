@@ -5,6 +5,7 @@
 #include <QSqlError>
 #include <QSqlRecord>
 #include <QDate>
+#include <include/buy_dialog.h>
 
 #include "./ui/ui_holding_tab.h"
 #include "include/new_holding_dialog.h"
@@ -28,10 +29,10 @@ HoldingTab::HoldingTab(QSqlTableModel *db_model, Settings *settings, QWidget *pa
             &HoldingTab::refresh_market);
     connect(ui->refresh_button, &QPushButton::clicked, this, &HoldingTab::refresh_records);
     connect(ui->new_button, &QPushButton::clicked, this,
-            &HoldingTab::new_record);
+            &HoldingTab::new_fund);
     connect(ui->delete_button, &QPushButton::clicked, this,
-            &HoldingTab::delete_record);
-    connect(ui->edit_button, &QPushButton::clicked, this, &HoldingTab::edit_record);
+            &HoldingTab::delete_fund);
+    connect(ui->edit_button, &QPushButton::clicked, this, &HoldingTab::edit_fund);
 
     // 表头列移动、改变大小时存储state到设置中 以便下次启动恢复顺序
     connect(ui->holding_table_view->horizontalHeader(), &QHeaderView::sectionMoved, this,
@@ -39,37 +40,17 @@ HoldingTab::HoldingTab(QSqlTableModel *db_model, Settings *settings, QWidget *pa
     connect(ui->holding_table_view->horizontalHeader(), &QHeaderView::sectionResized, this,
             &HoldingTab::save_horizontal_state);
 
-    // 右键菜单
-    ui->holding_table_view->setContextMenuPolicy(Qt::CustomContextMenu);
-
-    context_menu = new QMenu(this);
-    buy_action = new QAction(tr("加仓"), this);
-    sell_action = new QAction(tr("减仓"), this);
-    nav_history_action = new QAction(tr("历史净值"), this);
-    context_menu->addAction(buy_action);
-    context_menu->addAction(sell_action);
-    context_menu->addAction(nav_history_action);
-
-    connect(ui->holding_table_view,
-            &QTableView::customContextMenuRequested,
-            this,
-            &HoldingTab::context_menu_slot);
-
-    connect(buy_action,
-            &QAction::triggered,
-            this,
-            [=]() {
-                qDebug() << ui->holding_table_view->currentIndex().row();
-            });
+    // 初始化右键菜单相关设置
+    init_context_menu();
 }
 
 HoldingTab::~HoldingTab() {
     delete ui;
 }
 
-void HoldingTab::new_record() {
+void HoldingTab::new_fund() {
     NewHoldingDialog dialog(this, false);
-    connect(&dialog, &NewHoldingDialog::modified_record, this,
+    connect(&dialog, &NewHoldingDialog::modified_fund, this,
             [=](const QString &code, double holding_unit_cost,
                 double holding_share, const QString &remarks) {
                 FundInfo fund(db_model);
@@ -85,7 +66,7 @@ void HoldingTab::new_record() {
     dialog.exec();
 }
 
-void HoldingTab::delete_record() {
+void HoldingTab::delete_fund() {
     QModelIndex selected_index = ui->holding_table_view->currentIndex();
     if (!selected_index.isValid()) {
         return;
@@ -121,7 +102,7 @@ void HoldingTab::delete_record() {
 }
 
 
-void HoldingTab::edit_record() {
+void HoldingTab::edit_fund() {
     QModelIndex selected_index = ui->holding_table_view->currentIndex();
     if (!selected_index.isValid()) {
         return;
@@ -133,7 +114,7 @@ void HoldingTab::edit_record() {
                             fund.get_holding_unit_cost(),
                             fund.get_holding_share(),
                             fund.get_remarks());
-    connect(&dialog, &NewHoldingDialog::modified_record, this,
+    connect(&dialog, &NewHoldingDialog::modified_fund, this,
             [&](const QString &code, double holding_unit_cost,
                 double holding_share, const QString &remarks) {
 
@@ -186,12 +167,6 @@ void HoldingTab::ui_init() {
     // 设置根据Order_id列排序
     ui->holding_table_view->sortByColumn(ORDER_ID_COL, Qt::AscendingOrder);
 
-    // 隐藏列
-    ui->holding_table_view->setColumnHidden(ID_COL, true);  // 隐藏ID列
-    ui->holding_table_view->setColumnHidden(ORDER_ID_COL, true);  // 隐藏顺序ID列
-    ui->holding_table_view->setColumnHidden(HOLDING_AMOUNT_COL, true); // 隐藏持有金额
-    ui->holding_table_view->setColumnHidden(VALUATION_TIME_COL, true); // 隐藏估值时间
-
     // 隐藏汇总信息中的已结算收益
     ui->settled_earnings_text_label->hide();
     ui->settled_earnings_label->hide();
@@ -208,6 +183,13 @@ void HoldingTab::ui_init() {
     if (!horizontal_state.isEmpty()) {
         ui->holding_table_view->horizontalHeader()->restoreState(horizontal_state);
     }
+
+    // 隐藏列
+    ui->holding_table_view->setColumnHidden(ID_COL, true);  // 隐藏ID列
+    ui->holding_table_view->setColumnHidden(ORDER_ID_COL, true);  // 隐藏顺序ID列
+    ui->holding_table_view->setColumnHidden(HOLDING_AMOUNT_COL, true); // 隐藏持有金额
+    ui->holding_table_view->setColumnHidden(VALUATION_TIME_COL, true); // 隐藏估值时间
+    ui->holding_table_view->setColumnHidden(SETTLED_COL, true); // 隐藏是否已结算标记
 }
 
 void HoldingTab::save_horizontal_state() {
@@ -223,7 +205,7 @@ void HoldingTab::calculate_summary_info() {
     double total_holding_amount = 0; // 持有总金额
     double total_expected_earnings = 0; // 预期未结算总收益
     double total_settled_earnings = 0; // 已结算总收益
-    bool settled = false; // 是否有已结算的基金
+    bool total_settled = false; // 是否有已结算的基金
 
     ui->settled_earnings_text_label->hide();
     ui->settled_earnings_label->hide();
@@ -235,17 +217,11 @@ void HoldingTab::calculate_summary_info() {
         total_holding_amount += record.value(HOLDING_AMOUNT_KEY).toDouble();
 
         // 判断是否已结算
-        QDate nav_date = QDate::fromString(record.value(NAV_TIME_KEY).toString(), "yyyy-MM-dd");
-        QDate valuation_date = QDate::fromString(record.value(VALUATION_TIME_KEY).toString().mid(0, 10),
-                                                 "yyyy-MM-dd"); // 只取前10个字符 只要年月日
-        if (nav_date >= valuation_date) { // 已结算
-            settled = true;
-            double nav = record.value(NAV_KEY).toDouble();
-            double nav_gains = record.value(NAV_GAINS_KEY).toDouble() / 100;
-            double holding_share = record.value(HOLDING_SHARE_KEY).toDouble();
-            total_settled_earnings += holding_share * (nav / (1 + nav_gains) * nav_gains);
+        if (record.value(SETTLED_KEY).toBool()) {
+            total_settled = true;
+            total_settled_earnings += record.value(EXPECTED_EARNINGS_COL).toDouble();
         } else {
-            total_expected_earnings += record.value(EXPECTED_EARNINGS_KEY).toDouble();
+            total_expected_earnings += record.value(EXPECTED_EARNINGS_COL).toDouble();
         }
     }
     ui->total_cost_label->setText(QString::number(total_cost, 'f', 0));
@@ -253,8 +229,8 @@ void HoldingTab::calculate_summary_info() {
     ui->total_holding_amount_label->setText(QString::number(total_holding_amount, 'f', 2));
     ui->total_expected_earnings_label->setText(QString::number(total_expected_earnings, 'f', 2));
     // 已结算收益
-    ui->settled_earnings_label->setHidden(!settled);
-    ui->settled_earnings_text_label->setHidden(!settled);
+    ui->settled_earnings_label->setHidden(!total_settled);
+    ui->settled_earnings_text_label->setHidden(!total_settled);
     ui->settled_earnings_label->setText(QString::number(total_settled_earnings, 'f', 2));
 
     // 设置颜色
@@ -275,3 +251,71 @@ void HoldingTab::context_menu_slot(const QPoint &pos) {
         ui->holding_table_view->clearSelection();
     }
 }
+
+void HoldingTab::init_context_menu() {
+    ui->holding_table_view->setContextMenuPolicy(Qt::CustomContextMenu);
+
+    context_menu = new QMenu(this);
+    buy_action = new QAction(tr("加仓"), this);
+    sell_action = new QAction(tr("减仓"), this);
+    nav_history_action = new QAction(tr("历史净值"), this);
+    context_menu->addAction(buy_action);
+    context_menu->addAction(sell_action);
+    context_menu->addAction(nav_history_action);
+
+    connect(ui->holding_table_view,
+            &QTableView::customContextMenuRequested,
+            this,
+            &HoldingTab::context_menu_slot);
+
+    connect(buy_action, &QAction::triggered, this, &HoldingTab::buy_fund);
+    connect(sell_action, &QAction::triggered, this, &HoldingTab::sell_fund);
+}
+
+void HoldingTab::buy_fund() {
+    QModelIndex index = ui->holding_table_view->currentIndex();
+    if (!index.isValid()) {
+        return;
+    }
+    QSqlRecord record = db_model->record(index.row());
+    FundInfo fund(db_model, record);
+    // 先刷新信息 防止在未更新到结算状态之前加仓
+    fund.refresh_and_save_record_changes_to_database(index.row());
+
+    // 从设置中读取保存的买入手续费
+    double stored_service_charge = settings->load_buy_service_charge(fund.get_code());
+
+    BuyDialog dialog(record.value(CODE_KEY).toString(),
+                     record.value(NAME_KEY).toString(),
+                     fund.get_nav(),
+                     stored_service_charge,
+                     this);
+
+    connect(&dialog, &BuyDialog::buy_confirmed, this,
+            [=, &fund](double buy_amount, double buy_nav, double service_charge) {
+                // 存储输入的手续费费率
+                settings->save_buy_service_charge(fund.get_code(), service_charge);
+
+                double charges = buy_amount * (service_charge / 100); // 手续费具体金额
+                buy_amount -= charges;
+                double buy_share = buy_amount / buy_nav; // 买入的份额
+
+                double holding_share = fund.get_holding_share() + buy_share; // 加仓后总份额
+                double holding_amount = fund.get_holding_amount() + buy_amount; // 加仓后总持仓金额
+                double holding_unit_cost = holding_amount / holding_share;
+                fund.set_holding_share(holding_share);
+                fund.set_holding_amount(holding_amount);
+                fund.set_holding_unit_cost(holding_unit_cost);
+                fund.refresh_and_save_record_changes_to_database(index.row());
+
+                calculate_summary_info();
+
+            });
+    dialog.exec();
+}
+
+void HoldingTab::sell_fund() {
+
+}
+
+

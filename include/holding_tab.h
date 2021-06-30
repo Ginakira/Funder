@@ -29,11 +29,15 @@ signals:
 
 private slots:
 
-    void new_record();
+    void new_fund();
 
-    void delete_record();
+    void delete_fund();
 
-    void edit_record();
+    void edit_fund();
+
+    void buy_fund();
+
+    void sell_fund();
 
     void calculate_summary_info();
 
@@ -43,6 +47,8 @@ private slots:
 
 private:
     void ui_init();
+
+    void init_context_menu(); // 初始化右键菜单相关设置
 
     QMenu *context_menu;
     QAction *buy_action;
