@@ -57,6 +57,19 @@ set(PROJECT_SOURCES
         src/ui/buy_dialog.ui
         )
 
+# 应用图标相关
+# NOTE: Don't include the path in MACOSX_BUNDLE_ICON_FILE -- this is
+# the property added to Info.plist
+set(MACOSX_BUNDLE_ICON_FILE app_icon.icns)
+
+# And this part tells CMake where to find and install the file itself
+set(APP_ICON_MACOSX ${CMAKE_CURRENT_SOURCE_DIR}/resources/icons/app_icon.icns)
+set_source_files_properties(${APP_ICON_MACOSX} PROPERTIES
+        MACOSX_PACKAGE_LOCATION "Resources")
+
+set(APP_ICON_RESOURCE_WINDOWS "${CMAKE_CURRENT_SOURCE_DIR}/app_win32.rc")
+
+
 if (${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(Funder
             MANUAL_FINALIZATION
@@ -67,10 +80,12 @@ else ()
         add_library(Funder SHARED
                 ${PROJECT_SOURCES}
                 )
+    elseif (APPLE)
+        add_executable(Funder MACOSX_BUNDLE ${PROJECT_SOURCES} ${APP_ICON_MACOSX})
+    elseif (WIN32)
+        add_executable(Funder ${PROJECT_SOURCES} ${APP_ICON_RESOURCE_WINDOWS})
     else ()
-        add_executable(Funder
-                ${PROJECT_SOURCES}
-                )
+        add_executable(Funder ${PROJECT_SOURCES})
     endif ()
 endif ()
 
