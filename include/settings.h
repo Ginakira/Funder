@@ -21,6 +21,10 @@ public:
 
     double load_buy_service_charge(const QString &code);
 
+    void save_window_geometry(const QByteArray &state);
+
+    QByteArray load_window_geometry();
+
 private:
     QSettings *m_settings;
 };

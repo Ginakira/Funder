@@ -6,6 +6,7 @@
 
 #define HORIZONTAL_HEADER_STATE_KEY "holding_tab/horizontal_header_state"
 #define BUY_SERVICE_CHARGE "buy_service_charge" // 买入手续费
+#define WINDOW_GEOMETRY "app/window_geometry" // 窗口大小和位置
 
 Settings::Settings(const QString &path, QObject *parent) : QObject(parent) {
     m_settings = new QSettings(path, QSettings::IniFormat, parent);
@@ -30,4 +31,12 @@ double Settings::load_buy_service_charge(const QString &code) {
         return 0;
     }
     return result.toDouble();
+}
+
+void Settings::save_window_geometry(const QByteArray &state) {
+    m_settings->setValue(WINDOW_GEOMETRY, state);
+}
+
+QByteArray Settings::load_window_geometry() {
+    return m_settings->value(WINDOW_GEOMETRY).toByteArray();
 }

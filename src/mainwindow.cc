@@ -29,6 +29,12 @@ MainWindow::MainWindow(QWidget *parent)
     ui->tab_widget->addTab(holding_tab, "持仓");
 
     connect(holding_tab, &HoldingTab::refresh_market, this, &MainWindow::refresh_market_info);
+
+    // 恢复窗口位置和大小
+    QByteArray geometry_state = settings->load_window_geometry();
+    if (!geometry_state.isEmpty()) {
+        restoreGeometry(geometry_state);
+    }
 }
 
 MainWindow::~MainWindow() {
@@ -92,4 +98,9 @@ void MainWindow::refresh_market_info() {
     get_stock_info("sz399006", ui->cybz_label);
     get_stock_info("sh000300", ui->hs300_label);
     get_stock_info("sh000016", ui->sz50_label);
+}
+
+void MainWindow::closeEvent(QCloseEvent *event) {
+    settings->save_window_geometry(saveGeometry());
+    event->accept();
 }

@@ -23,6 +23,9 @@ public:
 
     void init();
 
+protected:
+    void closeEvent(QCloseEvent *event) override;
+
 private:
     void refresh_market_info();
 
