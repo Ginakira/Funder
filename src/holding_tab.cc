@@ -5,18 +5,22 @@
 #include <QSqlError>
 #include <QSqlRecord>
 #include <QDate>
-#include <include/buy_dialog.h>
-#include <include/sell_dialog.h>
+#include <QMouseEvent>
 
 #include "./ui/ui_holding_tab.h"
 #include "include/new_holding_dialog.h"
 #include "include/fund_info.h"
 #include "include/database.h"
 #include "include/utility.h"
+#include "include/buy_dialog.h"
+#include "include/sell_dialog.h"
 
 HoldingTab::HoldingTab(QSqlTableModel *db_model, Settings *settings, QWidget *parent)
         : ui(new Ui::HoldingTab), db_model(db_model), settings(settings), QWidget(parent) {
     ui->setupUi(this);
+
+    // 给此选项卡安装事件过滤器 以单击空白处取消选择
+    this->installEventFilter(this);
 
     // 创建并设置代理模型
     proxy_model = new ProxyModel(this);
@@ -132,6 +136,9 @@ void HoldingTab::edit_fund() {
 
 
 void HoldingTab::refresh_records() {
+    // 取消选中
+    ui->holding_table_view->clearSelection();
+
     int rows = db_model->rowCount();
     if (rows == 0) {
         return;
@@ -337,6 +344,20 @@ void HoldingTab::sell_fund() {
         calculate_summary_info();
     });
     dialog.exec();
+}
+
+bool HoldingTab::eventFilter(QObject *obj, QEvent *event) {
+    if (obj == this) {
+        if (event->type() == QEvent::MouseButtonPress) {
+            auto *mouse_event = dynamic_cast<QMouseEvent *>(event);
+            QModelIndex index = ui->holding_table_view->indexAt(mouse_event->pos());
+            if (!index.isValid()) {
+                ui->holding_table_view->clearSelection();
+                return true;
+            }
+        }
+    }
+    return QObject::eventFilter(obj, event);
 }
 
 

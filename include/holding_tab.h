@@ -23,6 +23,9 @@ public:
 
     ~HoldingTab() override;
 
+protected:
+    bool eventFilter(QObject *obj, QEvent *event) override;
+
 signals:
 
     void refresh_market();
