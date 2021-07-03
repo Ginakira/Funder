@@ -15,9 +15,7 @@ BuyDialog::BuyDialog(const QString &code,
         ui->buy_nav_edit->setText(QString::number(nav));
     }
 
-    if (service_charge != 0) {
-        ui->service_charge_edit->setText(QString::number(service_charge));
-    }
+    ui->service_charge_edit->setText(QString::number(service_charge));
 
     connect(this, &QDialog::accepted, this, [=]() {
         double buy_amount = ui->buy_amount_edit->text().toDouble();
