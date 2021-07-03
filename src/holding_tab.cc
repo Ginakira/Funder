@@ -309,7 +309,7 @@ void HoldingTab::buy_fund() {
                 double buy_share = buy_amount / buy_nav; // 买入的份额
 
                 double holding_share = fund.get_holding_share() + buy_share; // 加仓后总份额
-                double holding_amount = fund.get_holding_amount() + buy_amount; // 加仓后总持仓金额
+                double holding_amount = fund.get_holding_total_cost() + buy_amount; // 加仓后总持仓金额
                 double holding_unit_cost = holding_amount / holding_share;
                 fund.set_holding_share(holding_share);
                 fund.set_holding_amount(holding_amount);
@@ -334,7 +334,7 @@ void HoldingTab::sell_fund() {
 
     connect(&dialog, &SellDialog::sell_confirmed, this, [=, &fund](double sell_share) {
         double holding_share = fund.get_holding_share() - sell_share; // 减仓后总份额
-        double holding_amount = fund.get_holding_amount() - (fund.get_nav() * sell_share); // 减仓后总持仓金额
+        double holding_amount = fund.get_holding_total_cost() - (fund.get_nav() * sell_share); // 减仓后总持仓金额
         double holding_unit_cost = holding_amount / holding_share;
         fund.set_holding_share(holding_share);
         fund.set_holding_amount(holding_amount);
