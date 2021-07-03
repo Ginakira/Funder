@@ -58,6 +58,9 @@ set(PROJECT_SOURCES
         include/sell_dialog.h
         src/sell_dialog.cc
         src/ui/sell_dialog.ui
+        include/settings_tab.h
+        src/settings_tab.cc
+        src/ui/settings_tab.ui
         )
 
 # 应用图标相关

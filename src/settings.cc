@@ -7,6 +7,12 @@
 #define HORIZONTAL_HEADER_STATE_KEY "holding_tab/horizontal_header_state"
 #define BUY_SERVICE_CHARGE "buy_service_charge" // 买入手续费
 #define WINDOW_GEOMETRY "app/window_geometry" // 窗口大小和位置
+#define WINDOW_FONT_SIZE "app/font_size" // 窗口文字大小
+
+const char *APP_VERSION = "1.0";
+const char *BUILD_VERSION = "build 20210703";
+
+const int DEFAULT_WINDOW_FONT_SIZE = 13;
 
 Settings::Settings(const QString &path, QObject *parent) : QObject(parent) {
     m_settings = new QSettings(path, QSettings::IniFormat, parent);
@@ -39,4 +45,12 @@ void Settings::save_window_geometry(const QByteArray &state) {
 
 QByteArray Settings::load_window_geometry() {
     return m_settings->value(WINDOW_GEOMETRY).toByteArray();
+}
+
+void Settings::save_window_font_size(int font_size) {
+    m_settings->setValue(WINDOW_FONT_SIZE, font_size);
+}
+
+int Settings::load_window_font_size() {
+    return m_settings->value(WINDOW_FONT_SIZE, DEFAULT_WINDOW_FONT_SIZE).toInt();
 }

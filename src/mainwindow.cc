@@ -5,6 +5,8 @@
 #include "include/utility.h"
 #include "include/my_sql_table_model.h"
 
+#include <QFont>
+
 MainWindow::MainWindow(QWidget *parent)
         : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
@@ -25,8 +27,12 @@ MainWindow::MainWindow(QWidget *parent)
     // 初始化设置信息
     settings = new Settings(QCoreApplication::applicationDirPath() + "/settings.ini");
 
+    // 加仓选项卡
     holding_tab = new HoldingTab(db_model, settings, this);
-    ui->tab_widget->addTab(holding_tab, "持仓");
+    ui->tab_widget->addTab(holding_tab, tr("持仓"));
+    // 设置选项卡
+    settings_tab = new SettingsTab(settings, this);
+    ui->tab_widget->addTab(settings_tab, tr("设置"));
 
     connect(holding_tab, &HoldingTab::refresh_market, this, &MainWindow::refresh_market_info);
 

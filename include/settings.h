@@ -8,6 +8,9 @@
 #include <QObject>
 #include <QSettings>
 
+extern const char *APP_VERSION;
+extern const char *BUILD_VERSION;
+
 class Settings : public QObject {
 Q_OBJECT;
 public:
@@ -24,6 +27,10 @@ public:
     void save_window_geometry(const QByteArray &state);
 
     QByteArray load_window_geometry();
+
+    void save_window_font_size(int font_size);
+
+    int load_window_font_size();
 
 private:
     QSettings *m_settings;
