@@ -12,7 +12,13 @@
 const char *APP_VERSION = "1.0";
 const char *BUILD_VERSION = "build 20210703";
 
-const int DEFAULT_WINDOW_FONT_SIZE = 13;
+#ifdef Q_OS_MACOS
+#define DEFAULT_WINDOW_FONT_SIZE 13
+#endif
+
+#ifdef  Q_OS_WIN
+#define DEFAULT_WINDOW_FONT_SIZE 10
+#endif
 
 Settings::Settings(const QString &path, QObject *parent) : QObject(parent) {
     m_settings = new QSettings(path, QSettings::IniFormat, parent);
