@@ -198,6 +198,9 @@ void HoldingTab::ui_init() {
     ui->holding_table_view->setColumnHidden(HOLDING_AMOUNT_COL, true); // 隐藏持有金额
     ui->holding_table_view->setColumnHidden(VALUATION_TIME_COL, true); // 隐藏估值时间
     ui->holding_table_view->setColumnHidden(SETTLED_COL, true); // 隐藏是否已结算标记
+
+    // 设置表格颜色交替
+    ui->holding_table_view->setAlternatingRowColors(true);
 }
 
 void HoldingTab::save_horizontal_state() {
