@@ -201,6 +201,9 @@ void HoldingTab::ui_init() {
 
     // 设置表格颜色交替
     ui->holding_table_view->setAlternatingRowColors(true);
+
+    // 恢复表格行高
+    ui->holding_table_view->verticalHeader()->setDefaultSectionSize(settings->load_row_height());
 }
 
 void HoldingTab::save_horizontal_state() {
@@ -361,6 +364,11 @@ bool HoldingTab::eventFilter(QObject *obj, QEvent *event) {
         }
     }
     return QObject::eventFilter(obj, event);
+}
+
+void HoldingTab::row_height_changed(int height) {
+    ui->holding_table_view->verticalHeader()->setDefaultSectionSize(height);
+    settings->save_row_height(height);
 }
 
 

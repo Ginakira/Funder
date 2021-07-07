@@ -17,8 +17,13 @@ SettingsTab::SettingsTab(Settings *settings, QWidget *parent)
     QApplication::setFont(font);
     ui->font_size_spin_box->setValue(font_size);
 
+    ui->row_height_spin_box->setValue(settings->load_row_height());
+
     // 文字大小修改数字框
     connect(ui->font_size_spin_box, QOverload<int>::of(&QSpinBox::valueChanged), this, &SettingsTab::font_size_changed);
+    // 表格行高修改
+    connect(ui->row_height_spin_box, QOverload<int>::of(&QSpinBox::valueChanged), this,
+            &SettingsTab::row_height_changed);
 
     connect(ui->about_button, &QPushButton::clicked, this, &SettingsTab::about_message);
 

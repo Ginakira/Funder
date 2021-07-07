@@ -32,6 +32,10 @@ public:
 
     int load_window_font_size();
 
+    void save_row_height(int height);
+
+    int load_row_height();
+
 private:
     QSettings *m_settings;
 };

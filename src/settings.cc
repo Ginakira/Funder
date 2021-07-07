@@ -8,9 +8,10 @@
 #define BUY_SERVICE_CHARGE "buy_service_charge" // 买入手续费
 #define WINDOW_GEOMETRY "app/window_geometry" // 窗口大小和位置
 #define WINDOW_FONT_SIZE "app/font_size" // 窗口文字大小
+#define ROW_HEIGHT "app/row_height" // 表格行高
 
-const char *APP_VERSION = "1.0";
-const char *BUILD_VERSION = "build 20210703";
+const char *APP_VERSION = "1.01";
+const char *BUILD_VERSION = "build 20210707";
 
 #ifdef Q_OS_MACOS
 #define DEFAULT_WINDOW_FONT_SIZE 13
@@ -19,6 +20,8 @@ const char *BUILD_VERSION = "build 20210703";
 #ifdef  Q_OS_WIN
 #define DEFAULT_WINDOW_FONT_SIZE 10
 #endif
+
+#define DEFAULT_ROW_HEIGHT 30
 
 Settings::Settings(const QString &path, QObject *parent) : QObject(parent) {
     m_settings = new QSettings(path, QSettings::IniFormat, parent);
@@ -59,4 +62,12 @@ void Settings::save_window_font_size(int font_size) {
 
 int Settings::load_window_font_size() {
     return m_settings->value(WINDOW_FONT_SIZE, DEFAULT_WINDOW_FONT_SIZE).toInt();
+}
+
+void Settings::save_row_height(int height) {
+    m_settings->setValue(ROW_HEIGHT, height);
+}
+
+int Settings::load_row_height() {
+    return m_settings->value(ROW_HEIGHT, DEFAULT_ROW_HEIGHT).toInt();
 }

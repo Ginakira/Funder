@@ -41,6 +41,8 @@ MainWindow::MainWindow(QWidget *parent)
     if (!geometry_state.isEmpty()) {
         restoreGeometry(geometry_state);
     }
+
+    connect_settings_signals();
 }
 
 MainWindow::~MainWindow() {
@@ -109,4 +111,8 @@ void MainWindow::refresh_market_info() {
 void MainWindow::closeEvent(QCloseEvent *event) {
     settings->save_window_geometry(saveGeometry());
     event->accept();
+}
+
+void MainWindow::connect_settings_signals() {
+    connect(settings_tab, &SettingsTab::row_height_changed, holding_tab, &HoldingTab::row_height_changed);
 }

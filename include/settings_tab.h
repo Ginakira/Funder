@@ -22,6 +22,10 @@ public slots:
 
     void font_size_changed(int font_size);
 
+signals:
+
+    void row_height_changed(int height);
+
 private:
     Ui::SettingsTab *ui;
     Settings *settings;

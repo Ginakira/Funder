@@ -30,6 +30,10 @@ signals:
 
     void refresh_market();
 
+public slots:
+
+    void row_height_changed(int height);
+
 private slots:
 
     void new_fund();
