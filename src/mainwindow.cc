@@ -22,7 +22,6 @@ MainWindow::MainWindow(QWidget *parent)
     db_model->setTable("holding");
     set_db_model_header_data(db_model);
     db_model->select();
-    ui->statusbar->showMessage(tr("数据库初始化成功"), 1500);
 
     // 初始化设置信息
     settings = new Settings(QCoreApplication::applicationDirPath() + "/settings.ini");
@@ -55,8 +54,6 @@ void MainWindow::init() {
 }
 
 void MainWindow::get_stock_info(const QString &stock_code, QLabel *label) {
-    ui->statusbar->showMessage(tr("数据更新中...") + stock_code, 1500);
-
     QNetworkReply *reply =
             networker->get("https://hq.sinajs.cn/list=s_" + stock_code);
 
@@ -94,7 +91,6 @@ void MainWindow::get_stock_info(const QString &stock_code, QLabel *label) {
             label->setStyleSheet("color: " + color);
         }
         label->setText(list.join("  "));
-        ui->statusbar->showMessage(list[0] + tr(" 数据更新成功"), 1500);
 
         reply->deleteLater();
     });
