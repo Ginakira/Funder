@@ -128,6 +128,11 @@ QVariant ProxyModel::data(const QModelIndex &index, int role) const {
                 return QVariant::fromValue(QColor(Qt::red));
             }
         }
+    } else if (col == HOLDING_UNIT_COST_COL) { // 持仓成本列
+        if (role == Qt::DisplayRole) { // 保留小数点后四位
+            double rate = sourceModel()->data(index).toDouble();
+            return QString::number(rate, 'f', 4);
+        }
     }
     return QIdentityProxyModel::data(index, role);
 }
