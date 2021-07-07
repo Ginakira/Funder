@@ -14,6 +14,9 @@ SettingsTab::SettingsTab(Settings *settings, QWidget *parent)
     QFont font = QApplication::font();
     int font_size = settings->load_window_font_size();
     font.setPointSize(font_size);
+#ifdef Q_OS_WIN
+    font.setFamily("Microsoft YaHei"); // Windows下设置字体为微软雅黑
+#endif
     QApplication::setFont(font);
     ui->font_size_spin_box->setValue(font_size);
 
