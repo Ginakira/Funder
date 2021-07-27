@@ -5,6 +5,7 @@
 #include <QWidget>
 #include <QAction>
 #include <QMenu>
+#include <QLabel>
 
 #include "include/proxy_model.h"
 #include "include/settings.h"
@@ -15,20 +16,17 @@ class HoldingTab;
 
 class HoldingTab : public QWidget {
 Q_OBJECT
-
 public:
     explicit HoldingTab(QSqlTableModel *db_model, Settings *settings, QWidget *parent = nullptr);
 
     void refresh_records();
 
+    void refresh_market_info();
+
     ~HoldingTab() override;
 
 protected:
     bool eventFilter(QObject *obj, QEvent *event) override;
-
-signals:
-
-    void refresh_market();
 
 public slots:
 
@@ -56,6 +54,8 @@ private:
     void ui_init();
 
     void init_context_menu(); // 初始化右键菜单相关设置
+
+    void get_stock_info(const QString &stock_code, QLabel *label);
 
     QMenu *context_menu;
     QAction *buy_action;

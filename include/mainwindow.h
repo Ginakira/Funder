@@ -30,10 +30,6 @@ protected:
     void closeEvent(QCloseEvent *event) override;
 
 private:
-    void refresh_market_info();
-
-    void get_stock_info(const QString &stock_code, QLabel *label);
-
     void connect_settings_signals(); // 连接设置选项卡的相关信号和槽
 
     Ui::MainWindow *ui;

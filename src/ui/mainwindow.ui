@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1100</width>
-    <height>600</height>
+    <width>800</width>
+    <height>500</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -22,50 +22,6 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout_2">
     <item>
-     <widget class="QGroupBox" name="marketGroupBox">
-      <property name="title">
-       <string/>
-      </property>
-      <layout class="QGridLayout" name="gridLayout">
-       <item row="0" column="1">
-        <widget class="QLabel" name="cybz_label">
-         <property name="text">
-          <string>创业板指 ----.--  ---.-- --.--</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="0">
-        <widget class="QLabel" name="szzs_label">
-         <property name="text">
-          <string>上证指数 ----.--  ---.-- --.--</string>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="1">
-        <widget class="QLabel" name="sz50_label">
-         <property name="text">
-          <string>上证50 ----.--  ---.-- --.--</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="2">
-        <widget class="QLabel" name="hs300_label">
-         <property name="text">
-          <string>沪深300 ----.--  ---.-- --.--</string>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="0">
-        <widget class="QLabel" name="szcz_label">
-         <property name="text">
-          <string>深证成指 ----.--  ---.-- --.--</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item>
      <widget class="QTabWidget" name="tab_widget">
       <property name="currentIndex">
        <number>-1</number>
@@ -79,7 +35,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1100</width>
+     <width>800</width>
      <height>24</height>
     </rect>
    </property>

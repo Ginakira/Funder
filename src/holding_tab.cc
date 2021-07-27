@@ -1,11 +1,12 @@
 #include "include/holding_tab.h"
 
-#include <QDebug>
 #include <QMessageBox>
 #include <QSqlError>
 #include <QSqlRecord>
 #include <QDate>
 #include <QMouseEvent>
+#include <QNetworkReply>
+#include <include/networker.h>
 
 #include "./ui/ui_holding_tab.h"
 #include "include/new_holding_dialog.h"
@@ -31,7 +32,7 @@ HoldingTab::HoldingTab(QSqlTableModel *db_model, Settings *settings, QWidget *pa
 
     // 功能按钮信号槽绑定
     connect(ui->refresh_button, &QPushButton::clicked, this,
-            &HoldingTab::refresh_market);
+            &HoldingTab::refresh_market_info);
     connect(ui->refresh_button, &QPushButton::clicked, this, &HoldingTab::refresh_records);
     connect(ui->new_button, &QPushButton::clicked, this,
             &HoldingTab::new_fund);
@@ -371,4 +372,54 @@ void HoldingTab::row_height_changed(int height) {
     settings->save_row_height(height);
 }
 
+void HoldingTab::get_stock_info(const QString &stock_code, QLabel *label) {
+    NetWorker *networker = NetWorker::instance();
+    QNetworkReply *reply =
+            networker->get("https://hq.sinajs.cn/list=s_" + stock_code);
 
+    connect(reply, &QNetworkReply::finished, this, [=]() {
+        auto *reply = qobject_cast<QNetworkReply *>(sender());
+        QString str = getDecodedString(reply->readAll());
+
+        QRegExp regex("\"(.*)\"");
+        int pos = regex.indexIn(str);
+        if (pos < 0) {
+            qDebug() << "Regex error" << __FILE__ << __LINE__ << stock_code;
+            return;
+        }
+        QStringList list = regex.cap(1).split(",");
+
+        list = list.mid(0, 4);
+        QString color = "red", symbol = " ↑";
+        if (list[2].toDouble() < 0) {
+            color = "green";
+            symbol = " ↓";
+        }
+        if (list[1].toDouble() == 0) {
+            list = list.mid(0, 2);
+            list[1] = "未开盘";
+        } else {
+            // 保留两位
+            list[1] = QString::number(list[1].toDouble(), 'f', 2);
+            list[2] = QString::number(list[2].toDouble(), 'f', 2);
+            // 符号
+            list[1] += symbol;
+            if (list[2].toDouble() > 0) {
+                list[2] = "+" + list[2];
+            }
+            list[3] += "%";
+            label->setStyleSheet("color: " + color);
+        }
+        label->setText(list.join("  "));
+
+        reply->deleteLater();
+    });
+}
+
+void HoldingTab::refresh_market_info() {
+    get_stock_info("sh000001", ui->szzs_label);
+    get_stock_info("sz399001", ui->szcz_label);
+    get_stock_info("sz399006", ui->cybz_label);
+    get_stock_info("sh000300", ui->hs300_label);
+    get_stock_info("sh000016", ui->sz50_label);
+}
