@@ -262,7 +262,8 @@ bool FundInfo::calculate_other_info() {
     QDate valuation_date = QDate::fromString(valuation_time.mid(0, 10), "yyyy-MM-dd");
 
     // 如果已经记录的和当前均已处于结算状态，则不重新计算结算收益，防止结算后加仓时导致已结算收益变化
-    if (settled && nav_date >= valuation_date) {
+    // 最后一个判断是暂时性修改 有时会偶发已结算收益为0的bug
+    if (settled && nav_date >= valuation_date && expected_earnings != 0) {
         return true;
     } else {
         // 未计算过是否已结算 则计算是否已结算
