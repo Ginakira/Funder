@@ -61,6 +61,9 @@ set(PROJECT_SOURCES
         include/settings_tab.h
         src/settings_tab.cc
         src/ui/settings_tab.ui
+        include/nav_history_dialog.h
+        src/nav_history_dialog.cc
+        src/ui/nav_history_dialog.ui
         )
 
 # 应用图标相关

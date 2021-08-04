@@ -15,6 +15,7 @@
 #include "include/utility.h"
 #include "include/buy_dialog.h"
 #include "include/sell_dialog.h"
+#include "include/nav_history_dialog.h"
 
 HoldingTab::HoldingTab(QSqlTableModel *db_model, Settings *settings, QWidget *parent)
         : ui(new Ui::HoldingTab), db_model(db_model), settings(settings), QWidget(parent) {
@@ -286,6 +287,7 @@ void HoldingTab::init_context_menu() {
 
     connect(buy_action, &QAction::triggered, this, &HoldingTab::buy_fund);
     connect(sell_action, &QAction::triggered, this, &HoldingTab::sell_fund);
+    connect(nav_history_action, &QAction::triggered, this, &HoldingTab::show_nav_history);
     connect(edit_action, &QAction::triggered, this, &HoldingTab::edit_fund);
     connect(delete_action, &QAction::triggered, this, &HoldingTab::delete_fund);
 }
@@ -425,4 +427,14 @@ void HoldingTab::refresh_market_info() {
     get_stock_info("sz399006", ui->cybz_label);
     get_stock_info("sh000300", ui->hs300_label);
     get_stock_info("sh000016", ui->sz50_label);
+}
+
+void HoldingTab::show_nav_history() {
+    QModelIndex index = ui->holding_table_view->currentIndex();
+    if (!index.isValid()) {
+        return;
+    }
+    QSqlRecord record = db_model->record(index.row());
+    NavHistoryDialog dialog(record.value(CODE_COL).toString(), record.value(NAME_COL).toString(), this);
+    dialog.exec();
 }

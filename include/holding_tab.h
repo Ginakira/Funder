@@ -50,6 +50,8 @@ private slots:
 
     void context_menu_slot(const QPoint &pos);
 
+    void show_nav_history();
+
 private:
     void ui_init();
 
