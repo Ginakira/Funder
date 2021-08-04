@@ -32,9 +32,7 @@ public slots:
 
     void row_height_changed(int height);
 
-    void main_background_color_changed(const QString &hex_color);
-
-    void secondary_background_color_changed(const QString &hex_color);
+    void background_color_changed();
 
 private slots:
 
@@ -62,8 +60,6 @@ private:
     void init_context_menu(); // 初始化右键菜单相关设置
 
     void get_stock_info(const QString &stock_code, QLabel *label);
-
-    void init_table_background_color();
 
     QMenu *context_menu;
     QAction *buy_action;

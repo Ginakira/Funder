@@ -59,7 +59,7 @@ void MainWindow::closeEvent(QCloseEvent *event) {
 void MainWindow::connect_settings_signals() {
     connect(settings_tab, &SettingsTab::row_height_changed, holding_tab, &HoldingTab::row_height_changed);
     connect(settings_tab, &SettingsTab::main_background_color_changed, holding_tab,
-            &HoldingTab::main_background_color_changed);
+            &HoldingTab::background_color_changed);
     connect(settings_tab, &SettingsTab::secondary_background_color_changed, holding_tab,
-            &HoldingTab::secondary_background_color_changed);
+            &HoldingTab::background_color_changed);
 }

@@ -48,7 +48,7 @@ HoldingTab::HoldingTab(QSqlTableModel *db_model, Settings *settings, QWidget *pa
     init_context_menu();
 
     // 初始化表格背景色
-    init_table_background_color();
+    background_color_changed();
 }
 
 HoldingTab::~HoldingTab() {
@@ -443,21 +443,18 @@ void HoldingTab::show_nav_history() {
     dialog.exec();
 }
 
-void HoldingTab::main_background_color_changed(const QString &hex_color) {
-    ui->holding_table_view->setStyleSheet(QString("background-color: %1;").arg(hex_color));
-}
-
-void HoldingTab::secondary_background_color_changed(const QString &hex_color) {
-    ui->holding_table_view->setStyleSheet(QString("alternate-background-color: %1;").arg(hex_color));
-}
-
-void HoldingTab::init_table_background_color() {
+void HoldingTab::background_color_changed() {
     QString main_background_color = settings->load_main_background_color();
     QString secondary_background_color = settings->load_secondary_background_color();
+
+    QString style_sheet;
+
     if (!main_background_color.isEmpty()) {
-        main_background_color_changed(main_background_color);
+        style_sheet += QString("background-color: %1;").arg(main_background_color);
     }
     if (!secondary_background_color.isEmpty()) {
-        secondary_background_color_changed(secondary_background_color);
+        style_sheet += QString("alternate-background-color: %1;").arg(secondary_background_color);
     }
+
+    ui->holding_table_view->setStyleSheet(style_sheet);
 }
