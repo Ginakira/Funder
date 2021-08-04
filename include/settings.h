@@ -36,6 +36,18 @@ public:
 
     int load_row_height();
 
+    void save_main_background_color(const QString &hex_color);
+
+    QString load_main_background_color();
+
+    void save_secondary_background_color(const QString &hex_color);
+
+    QString load_secondary_background_color();
+
+    void reset_main_background_color();
+
+    void reset_secondary_background_color();
+
 private:
     QSettings *m_settings;
 };

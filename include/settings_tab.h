@@ -22,9 +22,17 @@ public slots:
 
     void font_size_changed(int font_size);
 
+    void change_main_background_button_clicked();
+
+    void change_secondary_background_button_clicked();
+
 signals:
 
     void row_height_changed(int height);
+
+    void main_background_color_changed(const QString &hex_color);
+
+    void secondary_background_color_changed(const QString &hex_color);
 
 private:
     Ui::SettingsTab *ui;

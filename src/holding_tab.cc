@@ -46,6 +46,9 @@ HoldingTab::HoldingTab(QSqlTableModel *db_model, Settings *settings, QWidget *pa
 
     // 初始化右键菜单相关设置
     init_context_menu();
+
+    // 初始化表格背景色
+    init_table_background_color();
 }
 
 HoldingTab::~HoldingTab() {
@@ -438,4 +441,23 @@ void HoldingTab::show_nav_history() {
     QSqlRecord record = db_model->record(index.row());
     NavHistoryDialog dialog(record.value(CODE_COL).toString(), record.value(NAME_COL).toString(), this);
     dialog.exec();
+}
+
+void HoldingTab::main_background_color_changed(const QString &hex_color) {
+    ui->holding_table_view->setStyleSheet(QString("background-color: %1;").arg(hex_color));
+}
+
+void HoldingTab::secondary_background_color_changed(const QString &hex_color) {
+    ui->holding_table_view->setStyleSheet(QString("alternate-background-color: %1;").arg(hex_color));
+}
+
+void HoldingTab::init_table_background_color() {
+    QString main_background_color = settings->load_main_background_color();
+    QString secondary_background_color = settings->load_secondary_background_color();
+    if (!main_background_color.isEmpty()) {
+        main_background_color_changed(main_background_color);
+    }
+    if (!secondary_background_color.isEmpty()) {
+        secondary_background_color_changed(secondary_background_color);
+    }
 }

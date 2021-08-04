@@ -3,6 +3,8 @@
 
 #include <QMessageBox>
 #include <QFont>
+#include <QColorDialog>
+#include <QDebug>
 
 #include "include/settings.h"
 
@@ -22,6 +24,15 @@ SettingsTab::SettingsTab(Settings *settings, QWidget *parent)
 
     ui->row_height_spin_box->setValue(settings->load_row_height());
 
+    QString main_background_color = settings->load_main_background_color();
+    QString secondary_background_color = settings->load_secondary_background_color();
+    if (!main_background_color.isEmpty()) {
+        ui->main_background_label->setText(main_background_color);
+    }
+    if (!secondary_background_color.isEmpty()) {
+        ui->secondary_background_label->setText(secondary_background_color);
+    }
+
     // 文字大小修改数字框
     connect(ui->font_size_spin_box, QOverload<int>::of(&QSpinBox::valueChanged), this, &SettingsTab::font_size_changed);
     // 表格行高修改
@@ -29,6 +40,22 @@ SettingsTab::SettingsTab(Settings *settings, QWidget *parent)
             &SettingsTab::row_height_changed);
 
     connect(ui->about_button, &QPushButton::clicked, this, &SettingsTab::about_message);
+
+    // 表格背景色更改
+    connect(ui->change_main_background_button, &QPushButton::clicked, this,
+            &SettingsTab::change_main_background_button_clicked);
+    connect(ui->change_secondary_background_button, &QPushButton::clicked, this,
+            &SettingsTab::change_secondary_background_button_clicked);
+    connect(ui->reset_main_background_button, &QPushButton::clicked, this, [=]() {
+        settings->reset_main_background_color();
+        ui->main_background_label->setText("默认");
+        emit main_background_color_changed("");
+    });
+    connect(ui->reset_secondary_background_button, &QPushButton::clicked, this, [=]() {
+        settings->reset_secondary_background_color();
+        ui->secondary_background_label->setText("默认");
+        emit secondary_background_color_changed("");
+    });
 
 }
 
@@ -53,4 +80,24 @@ void SettingsTab::font_size_changed(int font_size) {
     QFont font = QApplication::font();
     font.setPointSize(settings->load_window_font_size());
     QApplication::setFont(font);
+}
+
+void SettingsTab::change_main_background_button_clicked() {
+    QColorDialog dialog;
+    connect(&dialog, &QColorDialog::colorSelected, this, [&](QColor color) {
+        settings->save_main_background_color(color.name());
+        ui->main_background_label->setText(color.name());
+        emit main_background_color_changed(color.name());
+    });
+    dialog.exec();
+}
+
+void SettingsTab::change_secondary_background_button_clicked() {
+    QColorDialog dialog;
+    connect(&dialog, &QColorDialog::colorSelected, this, [&](QColor color) {
+        settings->save_secondary_background_color(color.name());
+        ui->secondary_background_label->setText(color.name());
+        emit secondary_background_color_changed(color.name());
+    });
+    dialog.exec();
 }

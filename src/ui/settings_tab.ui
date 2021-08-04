@@ -13,13 +13,13 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
       <string>界面设置</string>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_2">
+     <layout class="QVBoxLayout" name="verticalLayout">
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
@@ -84,6 +84,96 @@
         </item>
         <item>
          <spacer name="horizontalSpacer_3">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_4">
+        <item>
+         <widget class="QLabel" name="label_3">
+          <property name="text">
+           <string>表格主要背景色：</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="main_background_label">
+          <property name="text">
+           <string>默认</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="change_main_background_button">
+          <property name="text">
+           <string>更改</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="reset_main_background_button">
+          <property name="text">
+           <string>恢复默认</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_4">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_5">
+        <item>
+         <widget class="QLabel" name="label_4">
+          <property name="text">
+           <string>表格次要背景色：</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="secondary_background_label">
+          <property name="text">
+           <string>默认</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="change_secondary_background_button">
+          <property name="text">
+           <string>更改</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="reset_secondary_background_button">
+          <property name="text">
+           <string>恢复默认</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_5">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>

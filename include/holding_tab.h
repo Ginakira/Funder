@@ -32,6 +32,10 @@ public slots:
 
     void row_height_changed(int height);
 
+    void main_background_color_changed(const QString &hex_color);
+
+    void secondary_background_color_changed(const QString &hex_color);
+
 private slots:
 
     void new_fund();
@@ -59,6 +63,8 @@ private:
 
     void get_stock_info(const QString &stock_code, QLabel *label);
 
+    void init_table_background_color();
+
     QMenu *context_menu;
     QAction *buy_action;
     QAction *sell_action;
@@ -70,6 +76,7 @@ private:
     QSqlTableModel *db_model;
     ProxyModel *proxy_model;
     Settings *settings;
+
 };
 
 #endif // HOLDINGTAB_H

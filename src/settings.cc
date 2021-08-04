@@ -4,13 +4,17 @@
 
 #include "include/settings.h"
 
+#include <QDebug>
+
 #define HORIZONTAL_HEADER_STATE_KEY "holding_tab/horizontal_header_state"
 #define BUY_SERVICE_CHARGE "buy_service_charge" // 买入手续费
 #define WINDOW_GEOMETRY "app/window_geometry" // 窗口大小和位置
 #define WINDOW_FONT_SIZE "app/font_size" // 窗口文字大小
 #define ROW_HEIGHT "app/row_height" // 表格行高
+#define MAIN_BACKGROUND_COLOR "app/main_background_color" // 主要背景色
+#define SECONDARY_BACKGROUND_COLOR "app/secondary_background_color" // 次要背景色
 
-const char *APP_VERSION = "1.13";
+const char *APP_VERSION = "1.23";
 const char *BUILD_VERSION = "build 20210804";
 
 #ifdef Q_OS_MACOS
@@ -71,3 +75,28 @@ void Settings::save_row_height(int height) {
 int Settings::load_row_height() {
     return m_settings->value(ROW_HEIGHT, DEFAULT_ROW_HEIGHT).toInt();
 }
+
+void Settings::save_main_background_color(const QString &hex_color) {
+    m_settings->setValue(MAIN_BACKGROUND_COLOR, hex_color);
+}
+
+QString Settings::load_main_background_color() {
+    return m_settings->value(MAIN_BACKGROUND_COLOR).toString();
+}
+
+void Settings::save_secondary_background_color(const QString &hex_color) {
+    m_settings->setValue(SECONDARY_BACKGROUND_COLOR, hex_color);
+}
+
+QString Settings::load_secondary_background_color() {
+    return m_settings->value(SECONDARY_BACKGROUND_COLOR).toString();
+}
+
+void Settings::reset_main_background_color() {
+    m_settings->remove(MAIN_BACKGROUND_COLOR);
+}
+
+void Settings::reset_secondary_background_color() {
+    m_settings->remove(SECONDARY_BACKGROUND_COLOR);
+}
+
