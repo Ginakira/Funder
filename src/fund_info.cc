@@ -262,7 +262,7 @@ bool FundInfo::calculate_other_info() {
     QDate valuation_date = QDate::fromString(valuation_time.mid(0, 10), "yyyy-MM-dd");
 
     // 如果已经记录的和当前均已处于结算状态，则不重新计算结算收益，防止结算后加仓时导致已结算收益变化
-    // 最后一个判断是暂时性修改 有时会偶发已结算收益为0的bug
+    // 最后一个判断是防止已结算收益为0的bug 蛋卷基金的接口数据当日涨幅更新可能不及时 导致计算收益为0
     if (settled && nav_date >= valuation_date && expected_earnings != 0) {
         return true;
     } else {

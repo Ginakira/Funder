@@ -61,6 +61,8 @@ private:
     QAction *buy_action;
     QAction *sell_action;
     QAction *nav_history_action;
+    QAction *edit_action;
+    QAction *delete_action;
 
     Ui::HoldingTab *ui;
     QSqlTableModel *db_model;

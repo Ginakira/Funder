@@ -36,9 +36,6 @@ HoldingTab::HoldingTab(QSqlTableModel *db_model, Settings *settings, QWidget *pa
     connect(ui->refresh_button, &QPushButton::clicked, this, &HoldingTab::refresh_records);
     connect(ui->new_button, &QPushButton::clicked, this,
             &HoldingTab::new_fund);
-    connect(ui->delete_button, &QPushButton::clicked, this,
-            &HoldingTab::delete_fund);
-    connect(ui->edit_button, &QPushButton::clicked, this, &HoldingTab::edit_fund);
 
     // 表头列移动、改变大小时存储state到设置中 以便下次启动恢复顺序
     connect(ui->holding_table_view->horizontalHeader(), &QHeaderView::sectionMoved, this,
@@ -274,9 +271,13 @@ void HoldingTab::init_context_menu() {
     buy_action = new QAction(tr("加仓"), this);
     sell_action = new QAction(tr("减仓"), this);
     nav_history_action = new QAction(tr("历史净值"), this);
+    edit_action = new QAction(tr("编辑"), this);
+    delete_action = new QAction(tr("删除"), this);
     context_menu->addAction(buy_action);
     context_menu->addAction(sell_action);
     context_menu->addAction(nav_history_action);
+    context_menu->addAction(edit_action);
+    context_menu->addAction(delete_action);
 
     connect(ui->holding_table_view,
             &QTableView::customContextMenuRequested,
@@ -285,6 +286,8 @@ void HoldingTab::init_context_menu() {
 
     connect(buy_action, &QAction::triggered, this, &HoldingTab::buy_fund);
     connect(sell_action, &QAction::triggered, this, &HoldingTab::sell_fund);
+    connect(edit_action, &QAction::triggered, this, &HoldingTab::edit_fund);
+    connect(delete_action, &QAction::triggered, this, &HoldingTab::delete_fund);
 }
 
 void HoldingTab::buy_fund() {

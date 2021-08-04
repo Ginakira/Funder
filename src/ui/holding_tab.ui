@@ -65,20 +65,6 @@
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="edit_button">
-          <property name="text">
-           <string>编辑</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="delete_button">
-          <property name="text">
-           <string>删除</string>
-          </property>
-         </widget>
-        </item>
-        <item>
          <widget class="QPushButton" name="refresh_button">
           <property name="text">
            <string>更新</string>

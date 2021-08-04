@@ -10,8 +10,8 @@
 #define WINDOW_FONT_SIZE "app/font_size" // 窗口文字大小
 #define ROW_HEIGHT "app/row_height" // 表格行高
 
-const char *APP_VERSION = "1.02";
-const char *BUILD_VERSION = "build 20210727";
+const char *APP_VERSION = "1.03";
+const char *BUILD_VERSION = "build 20210804";
 
 #ifdef Q_OS_MACOS
 #define DEFAULT_WINDOW_FONT_SIZE 13
