@@ -56,7 +56,6 @@ SettingsTab::SettingsTab(Settings *settings, QWidget *parent)
         ui->secondary_background_label->setText("默认");
         emit secondary_background_color_changed("");
     });
-
 }
 
 SettingsTab::~SettingsTab() {
@@ -84,7 +83,8 @@ void SettingsTab::font_size_changed(int font_size) {
 
 void SettingsTab::change_main_background_button_clicked() {
     QColorDialog dialog;
-    connect(&dialog, &QColorDialog::colorSelected, this, [&](QColor color) {
+    dialog.setCurrentColor(QColor(settings->load_main_background_color()));
+    connect(&dialog, &QColorDialog::colorSelected, this, [&](const QColor &color) {
         settings->save_main_background_color(color.name());
         ui->main_background_label->setText(color.name());
         emit main_background_color_changed(color.name());
@@ -94,7 +94,8 @@ void SettingsTab::change_main_background_button_clicked() {
 
 void SettingsTab::change_secondary_background_button_clicked() {
     QColorDialog dialog;
-    connect(&dialog, &QColorDialog::colorSelected, this, [&](QColor color) {
+    dialog.setCurrentColor(QColor(settings->load_secondary_background_color()));
+    connect(&dialog, &QColorDialog::colorSelected, this, [&](const QColor &color) {
         settings->save_secondary_background_color(color.name());
         ui->secondary_background_label->setText(color.name());
         emit secondary_background_color_changed(color.name());
