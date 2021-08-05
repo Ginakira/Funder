@@ -14,7 +14,7 @@
 #define MAIN_BACKGROUND_COLOR "app/main_background_color" // 主要背景色
 #define SECONDARY_BACKGROUND_COLOR "app/secondary_background_color" // 次要背景色
 
-const char *APP_VERSION = "1.25";
+const char *APP_VERSION = "1.26";
 const char *BUILD_VERSION = "build 20210805";
 
 #ifdef Q_OS_MACOS

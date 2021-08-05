@@ -14,10 +14,13 @@ NavHistoryDialog::NavHistoryDialog(const QString &code, const QString &name, QWi
     ui->table_widget->setColumnCount(3);
     ui->table_widget->setHorizontalHeaderLabels(
             QStringList() << tr("日期") << tr("净值") << tr("涨幅"));
+    ui->table_widget->verticalHeader()->hide();
 
     connect(ui->more_button, &QPushButton::clicked, this, &NavHistoryDialog::get_more_history);
 
     get_more_history();
+    ui->table_widget->resizeColumnsToContents();
+    this->adjustSize();
 }
 
 NavHistoryDialog::~NavHistoryDialog() {
@@ -69,7 +72,7 @@ void NavHistoryDialog::get_more_history() {
         auto *percentage_item = new QTableWidgetItem;
 
         QMap<QString, QVariant> item_map = item.toMap();
-        QString date = item_map["date"].toString();
+        QString date = item_map["date"].toString().mid(5);
         double nav = item_map["nav"].toDouble();
         double percentage = item_map["percentage"].toDouble();
 
