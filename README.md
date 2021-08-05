@@ -1,5 +1,12 @@
 # Funder
 
+![LatestVersion](https://img.shields.io/github/v/tag/Ginakira/Funder?label=Latest%20Version&style=for-the-badge)
+![LastCommit](https://img.shields.io/github/last-commit/Ginakira/Funder?style=for-the-badge)
+![CommitPerMonth](https://img.shields.io/github/commit-activity/m/Ginakira/Funder?style=for-the-badge)
+
+![QtVersion](https://img.shields.io/badge/Qt%20Version-5.15.2-brightgreen?style=for-the-badge&logo=qt)
+![License](https://img.shields.io/github/license/Ginakira/Funder?style=for-the-badge)
+
 基于 Qt 5 的跨平台基金信息统计助手
 
 ![image.png](https://i.loli.net/2021/08/05/mpK1hijwUqNHIRZ.png)
