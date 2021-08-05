@@ -2,7 +2,7 @@
 
 基于 Qt 5 的跨平台基金信息统计助手
 
-![image.png](https://i.loli.net/2021/07/01/wPYLBxSya1XAgR7.png)
+![image.png](https://i.loli.net/2021/08/05/mpK1hijwUqNHIRZ.png)
 
 ## 支持功能
 
