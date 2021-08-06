@@ -21,7 +21,7 @@ NavHistoryDialog::NavHistoryDialog(const QString &code, const QString &name, QWi
 
     get_more_history();
     ui->table_widget->resizeColumnsToContents();
-    ui->table_widget->setFixedWidth(300);
+    ui->table_widget->setFixedWidth(400);
 
     init_chart();
 
