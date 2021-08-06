@@ -3,6 +3,7 @@
 #include "./ui/ui_nav_history_dialog.h"
 #include "include/networker.h"
 
+
 const QString NavHistoryDialog::api_base_url = "https://danjuanapp.com/djapi/fund/nav/history";
 
 NavHistoryDialog::NavHistoryDialog(const QString &code, const QString &name, QWidget *parent)
@@ -20,11 +21,23 @@ NavHistoryDialog::NavHistoryDialog(const QString &code, const QString &name, QWi
 
     get_more_history();
     ui->table_widget->resizeColumnsToContents();
+    ui->table_widget->setFixedWidth(300);
+
+    init_chart();
+
     this->adjustSize();
 }
 
 NavHistoryDialog::~NavHistoryDialog() {
+    qDebug() << "DESTRUCTOR";
+    qDebug() << line_series->detachAxis(axis_x);
+    qDebug() << line_series->detachAxis(axis_y);
+    chart->removeAxis(axis_x);
+    chart->removeAxis(axis_y);
+    chart->removeSeries(line_series);
     delete ui;
+    delete line_series;
+    delete chart;
 }
 
 QVariantMap NavHistoryDialog::get_json_from_networker(const QString &url) {
@@ -72,13 +85,15 @@ void NavHistoryDialog::get_more_history() {
         auto *percentage_item = new QTableWidgetItem;
 
         QMap<QString, QVariant> item_map = item.toMap();
-        QString date = item_map["date"].toString().mid(5);
+        QString date = item_map["date"].toString();
         double nav = item_map["nav"].toDouble();
         double percentage = item_map["percentage"].toDouble();
 
-        date_item->setText(date);
+        date_item->setText(date.mid(5));
         nav_item->setText(QString::number(nav));
         percentage_item->setText(QString::number(percentage) + "%");
+
+        data.push_back({date, nav, percentage});
 
         QColor color = Qt::red;
         if (percentage < 0) {
@@ -94,5 +109,41 @@ void NavHistoryDialog::get_more_history() {
     }
 
     ++current_page;
+}
+
+void NavHistoryDialog::init_chart() {
+    line_series = new QtCharts::QLineSeries();
+    for (auto &item : data) {
+        QString date = item[0].toString();
+        double nav = item[1].toDouble();
+
+        QDateTime moment_in_time;
+        QStringList split_date = date.split(QLatin1Char('-'), Qt::SkipEmptyParts);
+        moment_in_time.setDate(QDate(split_date[0].toInt(), split_date[1].toInt(), split_date[2].toInt()));
+        line_series->append(qreal(moment_in_time.toMSecsSinceEpoch()), nav);
+
+        chart = new QtCharts::QChart();
+        chart->addSeries(line_series);
+        chart->legend()->hide();
+
+        axis_x = new QtCharts::QDateTimeAxis;
+        axis_x->setTickCount(10);
+        axis_x->setFormat("MM-dd");
+        axis_x->setTitleText(tr("日期"));
+        chart->addAxis(axis_x, Qt::AlignBottom);
+        line_series->attachAxis(axis_x);
+
+        axis_y = new QtCharts::QValueAxis;
+        axis_y->setLabelFormat("%.4f");
+        axis_y->setTitleText(tr("净值"));
+        chart->addAxis(axis_y, Qt::AlignLeft);
+        line_series->attachAxis(axis_y);
+        axis_y->setRange(axis_y->min() - 0.5, axis_y->max() + 0.5);
+
+        ui->chart_view->setChart(chart);
+        ui->chart_view->setRenderHint(QPainter::Antialiasing);
+        ui->chart_view->setMinimumWidth(600);
+
+    }
 }
 
