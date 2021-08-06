@@ -14,8 +14,8 @@
 #define MAIN_BACKGROUND_COLOR "app/main_background_color" // 主要背景色
 #define SECONDARY_BACKGROUND_COLOR "app/secondary_background_color" // 次要背景色
 
-const char *APP_VERSION = "1.26";
-const char *BUILD_VERSION = "build 20210805";
+const char *APP_VERSION = "1.36";
+const char *BUILD_VERSION = "build 20210806";
 
 #ifdef Q_OS_MACOS
 #define DEFAULT_WINDOW_FONT_SIZE 13
