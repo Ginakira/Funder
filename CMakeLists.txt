@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(Funder VERSION 1.36 LANGUAGES CXX)
+project(Funder VERSION 1.46 LANGUAGES CXX)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -64,6 +64,8 @@ set(PROJECT_SOURCES
         include/nav_history_dialog.h
         src/nav_history_dialog.cc
         src/ui/nav_history_dialog.ui
+        include/nav_history_dialog.h
+        src/nav_history_chart_view.cc
         )
 
 # 应用图标相关

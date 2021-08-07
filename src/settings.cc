@@ -13,9 +13,11 @@
 #define ROW_HEIGHT "app/row_height" // 表格行高
 #define MAIN_BACKGROUND_COLOR "app/main_background_color" // 主要背景色
 #define SECONDARY_BACKGROUND_COLOR "app/secondary_background_color" // 次要背景色
+#define NAV_HISTORY_HISTORY_DIALOG_GEOMETRY "app/nav_history_dialog_geometry" // 窗口大小和位置
 
-const char *APP_VERSION = "1.36";
-const char *BUILD_VERSION = "build 20210806";
+
+const char *APP_VERSION = "1.46";
+const char *BUILD_VERSION = "build 20210807";
 
 #ifdef Q_OS_MACOS
 #define DEFAULT_WINDOW_FONT_SIZE 13
@@ -98,5 +100,14 @@ void Settings::reset_main_background_color() {
 
 void Settings::reset_secondary_background_color() {
     m_settings->remove(SECONDARY_BACKGROUND_COLOR);
+}
+
+void Settings::save_nav_history_dialog_geometry(const QByteArray &state) {
+    m_settings->setValue(NAV_HISTORY_HISTORY_DIALOG_GEOMETRY, state);
+}
+
+QByteArray Settings::load_nav_history_dialog_geometry() {
+    return m_settings->value(NAV_HISTORY_HISTORY_DIALOG_GEOMETRY).toByteArray();
+
 }
 

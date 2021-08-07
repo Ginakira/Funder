@@ -439,7 +439,7 @@ void HoldingTab::show_nav_history() {
         return;
     }
     QSqlRecord record = db_model->record(index.row());
-    NavHistoryDialog dialog(record.value(CODE_COL).toString(), record.value(NAME_COL).toString(), this);
+    NavHistoryDialog dialog(record.value(CODE_COL).toString(), record.value(NAME_COL).toString(), settings, this);
     dialog.exec();
 }
 

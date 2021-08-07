@@ -2,13 +2,12 @@
 #define NAV_HISTORY_DIALOG_H
 
 #include <QDialog>
-
-#include <QtCharts/QLineSeries>
-#include <QtCharts/QChartView>
-#include <QtCharts/QLineSeries>
+#include <limits>
 #include <QDateTime>
-#include <QtCharts/QDateTimeAxis>
-#include <QtCharts/QValueAxis>
+#include <QTableWidget>
+
+#include "include/nav_history_chart_view.h"
+#include "include/settings.h"
 
 namespace Ui {
 class NavHistoryDialog;
@@ -18,40 +17,45 @@ class NavHistoryDialog : public QDialog {
 Q_OBJECT
 
 public:
-    explicit NavHistoryDialog(const QString &code, const QString &name, QWidget *parent = nullptr);
+    explicit NavHistoryDialog(const QString &code, const QString &name, Settings *settings,
+                              QWidget *parent = nullptr);
 
     ~NavHistoryDialog() override;
 
+signals:
+
+    void need_get_more_history(int months = 1);
+
+protected:
+    void closeEvent(QCloseEvent *event) override;
+
 private slots:
 
-    void get_more_history();
-
+    void get_more_history(int months = 1);
 
 private:
     static QVariantMap get_json_from_networker(const QString &url);
 
-    void init_chart();
+    void init_table_widget();
 
     Ui::NavHistoryDialog *ui;
-
     const QString code;
-
     const QString name;
 
     int page_size = 30;
-
     int current_page = 1;
-
     int total_pages = 0;
-
     static const QString api_base_url;
 
-    QVector<QVector<QVariant>> data;
+    QTableWidget *table_widget;
+    NavHistoryChartView *nav_history_chart_view;
 
-    QtCharts::QLineSeries *line_series;
-    QtCharts::QChart *chart;
-    QtCharts::QDateTimeAxis *axis_x;
-    QtCharts::QValueAxis *axis_y;
+    QDateTime min_time;
+    QDateTime max_time;
+    double min_nav = std::numeric_limits<double>::max();
+    double max_nav = 0;
+
+    Settings *settings;
 };
 
 #endif // NAV_HISTORY_DIALOG_H

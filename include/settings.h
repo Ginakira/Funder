@@ -48,6 +48,10 @@ public:
 
     void reset_secondary_background_color();
 
+    void save_nav_history_dialog_geometry(const QByteArray &state);
+
+    QByteArray load_nav_history_dialog_geometry();
+
 private:
     QSettings *m_settings;
 };
