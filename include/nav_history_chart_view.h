@@ -31,7 +31,7 @@ private:
     QtCharts::QChart *chart;
     QtCharts::QDateTimeAxis *axis_x;
     QtCharts::QValueAxis *axis_y;
-    QLabel *tooltip_label;
+    QLabel *tooltip_label = nullptr;
 };
 
 #endif // NAVHISTORYCHARTVIEW_H
