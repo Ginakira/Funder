@@ -51,10 +51,22 @@ void NavHistoryChartView::append_data_to_chart(const QList<QPointF> &list, const
 }
 
 void NavHistoryChartView::point_hovered(const QPointF &point, bool state) {
+    if (tooltip_label == nullptr) {
+        tooltip_label = new QLabel(this);
+        tooltip_label->setStyleSheet(
+                "color: white;"
+                "background-color: rgba(0, 0, 0, 0.80);"
+                "padding: 5px;"
+        );
+    }
     if (state) {
         QDateTime date = QDateTime::fromMSecsSinceEpoch(point.x());
-        line_series->points();
         QString text = QString("%1\n当日净值：%2").arg(date.toString("yyyy-MM-dd"), QString::number(point.y()));
-        QToolTip::showText(QCursor::pos(), text, this);
+        QPoint cur_pos = mapFromGlobal(QCursor::pos());
+        tooltip_label->setText(text);
+        tooltip_label->move(cur_pos.x() - tooltip_label->width() / 2, int(cur_pos.y() - tooltip_label->height() * 1.5));
+        tooltip_label->show();
+    } else {
+        tooltip_label->hide();
     }
 }

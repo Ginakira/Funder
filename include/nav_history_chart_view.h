@@ -9,6 +9,7 @@
 #include <QtCharts/QLineSeries>
 #include <QtCharts/QDateTimeAxis>
 #include <QtCharts/QValueAxis>
+#include <QLabel>
 
 class NavHistoryChartView : public QtCharts::QChartView {
 public:
@@ -30,6 +31,7 @@ private:
     QtCharts::QChart *chart;
     QtCharts::QDateTimeAxis *axis_x;
     QtCharts::QValueAxis *axis_y;
+    QLabel *tooltip_label;
 };
 
 #endif // NAVHISTORYCHARTVIEW_H
