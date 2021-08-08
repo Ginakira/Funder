@@ -16,7 +16,7 @@
 #define NAV_HISTORY_HISTORY_DIALOG_GEOMETRY "app/nav_history_dialog_geometry" // 窗口大小和位置
 
 
-const char *APP_VERSION = "1.47";
+const char *APP_VERSION = "1.48";
 const char *BUILD_VERSION = "build 20210808";
 
 #ifdef Q_OS_MACOS

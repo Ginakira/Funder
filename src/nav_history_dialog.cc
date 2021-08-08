@@ -67,7 +67,7 @@ void NavHistoryDialog::get_more_history(int months) {
     for (int i = 0; i < months; ++i) {
         // 已达到最大页数
         if (total_pages != 0 && current_page > total_pages) {
-            return;
+            break;
         }
 
         QVariantMap response = get_json_from_networker(
