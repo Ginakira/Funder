@@ -321,8 +321,8 @@ void HoldingTab::buy_fund() {
                 settings->save_buy_service_charge(fund.get_code(), service_charge);
 
                 double charges = buy_amount * (service_charge / 100); // 手续费具体金额
-                buy_amount -= charges;
-                double buy_share = buy_amount / buy_nav; // 买入的份额
+                double real_buy_amount = buy_amount - charges;
+                double buy_share = real_buy_amount / buy_nav; // 买入的份额
 
                 double holding_share = fund.get_holding_share() + buy_share; // 加仓后总份额
                 double holding_amount = fund.get_holding_total_cost() + buy_amount; // 加仓后总持仓金额
