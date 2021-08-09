@@ -13,8 +13,8 @@ NewHoldingDialog::NewHoldingDialog(QWidget *parent, bool edit_mode,
 
     // 填充文本框
     ui->code_edit->setText(code);
-    ui->holding_unit_cost_edit->setText(QString::number(holding_unit_cost));
-    ui->holding_share_edit->setText(QString::number(holding_share));
+    ui->holding_unit_cost_edit->setText(QString::number(holding_unit_cost, 'f', 4));
+    ui->holding_share_edit->setText(QString::number(holding_share, 'f', 2));
     ui->remarks_edit->setText(remarks);
 
     // 编辑模式禁用基金代码框
