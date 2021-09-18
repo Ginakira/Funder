@@ -16,8 +16,8 @@
 #define NAV_HISTORY_HISTORY_DIALOG_GEOMETRY "app/nav_history_dialog_geometry" // 窗口大小和位置
 
 
-const char *APP_VERSION = "1.4.10";
-const char *BUILD_VERSION = "build 20210809";
+const char *APP_VERSION = "1.4.13";
+const char *BUILD_VERSION = "build 20210918";
 
 #ifdef Q_OS_MACOS
 #define DEFAULT_WINDOW_FONT_SIZE 13

@@ -30,8 +30,8 @@ NavHistoryDialog::NavHistoryDialog(const QString &code, const QString &name, Set
 
     ui->grid_layout->addWidget(nav_history_chart_view, 1, 0);
     ui->grid_layout->addWidget(table_widget, 1, 1);
-    ui->grid_layout->setColumnStretch(1, 0);
-    ui->grid_layout->setColumnStretch(0, 1);
+    ui->grid_layout->setColumnStretch(1, 1);
+    ui->grid_layout->setColumnStretch(0, 5);
 }
 
 NavHistoryDialog::~NavHistoryDialog() {
