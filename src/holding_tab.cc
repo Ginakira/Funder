@@ -350,7 +350,7 @@ void HoldingTab::sell_fund() {
 
     connect(&dialog, &SellDialog::sell_confirmed, this, [=, &fund](double sell_share) {
         double holding_share = fund.get_holding_share() - sell_share; // 减仓后总份额
-        double holding_amount = fund.get_holding_total_cost() - (fund.get_nav() * sell_share); // 减仓后总持仓金额
+        double holding_amount = fund.get_holding_total_cost() - (fund.get_holding_unit_cost() * sell_share); // 减仓后总持仓金额
         double holding_unit_cost = holding_amount / holding_share;
         fund.set_holding_share(holding_share);
         fund.set_holding_amount(holding_amount);
