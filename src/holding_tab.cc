@@ -383,8 +383,8 @@ void HoldingTab::row_height_changed(int height) {
 
 void HoldingTab::get_stock_info(const QString &stock_code, QLabel *label) {
     NetWorker *networker = NetWorker::instance();
-    QNetworkReply *reply =
-            networker->get("https://hq.sinajs.cn/list=s_" + stock_code);
+    QNetworkReply *reply = networker->get_with_referer("https://hq.sinajs.cn/list=s_" + stock_code,
+                                                       "https://finance.sina.com.cn");
 
     connect(reply, &QNetworkReply::finished, this, [=]() {
         auto *reply = qobject_cast<QNetworkReply *>(sender());
@@ -396,30 +396,30 @@ void HoldingTab::get_stock_info(const QString &stock_code, QLabel *label) {
             qDebug() << "Regex error" << __FILE__ << __LINE__ << stock_code;
             return;
         }
-        QStringList list = regex.cap(1).split(",");
+        QStringList data_list = regex.cap(1).split(",");
 
-        list = list.mid(0, 4);
+        data_list = data_list.mid(0, 4);
         QString color = "red", symbol = " ↑";
-        if (list[2].toDouble() < 0) {
+        if (data_list[2].toDouble() < 0) {
             color = "green";
             symbol = " ↓";
         }
-        if (list[1].toDouble() == 0) {
-            list = list.mid(0, 2);
-            list[1] = "未开盘";
+        if (data_list[1].toDouble() == 0) {
+            data_list = data_list.mid(0, 2);
+            data_list[1] = "未开盘";
         } else {
             // 保留两位
-            list[1] = QString::number(list[1].toDouble(), 'f', 2);
-            list[2] = QString::number(list[2].toDouble(), 'f', 2);
+            data_list[1] = QString::number(data_list[1].toDouble(), 'f', 2);
+            data_list[2] = QString::number(data_list[2].toDouble(), 'f', 2);
             // 符号
-            list[1] += symbol;
-            if (list[2].toDouble() > 0) {
-                list[2] = "+" + list[2];
+            data_list[1] += symbol;
+            if (data_list[2].toDouble() > 0) {
+                data_list[2] = "+" + data_list[2];
             }
-            list[3] += "%";
+            data_list[3] += "%";
             label->setStyleSheet("color: " + color);
         }
-        label->setText(list.join("  "));
+        label->setText(data_list.join("  "));
 
         reply->deleteLater();
     });
