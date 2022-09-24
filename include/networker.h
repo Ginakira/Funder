@@ -17,7 +17,8 @@ public:
 
     QNetworkReply *get(const QString &url);
 
-    QNetworkReply *get_with_referer(const QString &url, QByteArray &&referer_url);
+    QNetworkReply *get_with_referer(const QString &url, const QString &referer_url,
+                                    const std::function<void(QNetworkRequest *)> &request_modifier = nullptr);
 
 signals:
 

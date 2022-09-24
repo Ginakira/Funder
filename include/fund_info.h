@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QVariantMap>
 #include <QSqlTableModel>
+#include <QtNetwork>
 
 class FundInfo : public QObject {
 Q_OBJECT
@@ -94,7 +95,9 @@ public:
 
 private:
     static QVariantMap
-    get_json_from_networker(const QString &url, const std::function<QString(const QString &)> &filter = nullptr);
+    get_json_from_networker(const QString &url, const std::function<QString(const QString &)> &filter = nullptr,
+                            const QString &referer_url = QString(),
+                            const std::function<void(QNetworkRequest *)> &request_modifier = nullptr);
 
     bool refresh_fund_info();
 

@@ -162,9 +162,17 @@ void FundInfo::set_settled(bool settled) {
 
 
 QVariantMap
-FundInfo::get_json_from_networker(const QString &url, const std::function<QString(const QString &)> &filter) {
+FundInfo::get_json_from_networker(const QString &url, const std::function<QString(const QString &)> &filter,
+                                  const QString &referer_url,
+                                  const std::function<void(QNetworkRequest *)> &request_modifier) {
     NetWorker *networker = NetWorker::instance();
-    QNetworkReply *reply = networker->get(url);
+    QNetworkReply *reply = nullptr;
+
+    if (referer_url.isEmpty()) {
+        reply = networker->get(url);
+    } else {
+        reply = networker->get_with_referer(url, referer_url, request_modifier);
+    }
 
     QEventLoop synchronous;
     connect(reply, &QNetworkReply::finished, &synchronous, &QEventLoop::quit);
@@ -181,7 +189,8 @@ FundInfo::get_json_from_networker(const QString &url, const std::function<QStrin
     QJsonParseError error{};
     QJsonDocument json_doc = QJsonDocument::fromJson(content.toUtf8(), &error);
     if (error.error != QJsonParseError::NoError) {
-        qFatal("%s", error.errorString().toUtf8().constData());
+        qErrnoWarning("%s", error.errorString().toUtf8().constData());
+        return QVariantMap();
     }
 
     QVariantMap result = json_doc.toVariant().toMap();
@@ -229,7 +238,10 @@ bool FundInfo::get_nav_info() {
     }
 
     const QString base_url = "https://danjuanapp.com/djapi/fund/derived/%1";
-    QVariantMap result = get_json_from_networker(base_url.arg(code));
+    QVariantMap result = get_json_from_networker(base_url.arg(code), nullptr, "danjuanfunds.com",
+                                                 [](QNetworkRequest *request) {
+                                                     request->setRawHeader("Host", "danjuanfunds.com");
+                                                 });
     if (result.empty()) {
         return false;
     }
@@ -355,7 +367,7 @@ bool FundInfo::refresh_and_save_record_changes_to_database(int row) {
     save_to_record(record);
     if (!model->setRecord(row, record)) {
         QMessageBox::critical(nullptr, tr("基金更新失败"), (tr("基金%1-%2更新失败!\n错误信息：").arg(row).arg(name) +
-                                                      model->lastError().text()));
+                                                            model->lastError().text()));
         qDebug() << model->lastError();
     }
     return false;
