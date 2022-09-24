@@ -168,7 +168,7 @@ FundInfo::get_json_from_networker(const QString &url, const std::function<QStrin
     NetWorker *networker = NetWorker::instance();
     QNetworkReply *reply = nullptr;
 
-    if (referer_url.isEmpty()) {
+    if (referer_url.isEmpty() && request_modifier != nullptr) {
         reply = networker->get(url);
     } else {
         reply = networker->get_with_referer(url, referer_url, request_modifier);

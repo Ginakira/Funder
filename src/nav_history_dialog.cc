@@ -39,9 +39,16 @@ NavHistoryDialog::~NavHistoryDialog() {
     delete ui;
 }
 
-QVariantMap NavHistoryDialog::get_json_from_networker(const QString &url) {
+QVariantMap NavHistoryDialog::get_json_from_networker(const QString &url, const QString &referer_url,
+                                                      const std::function<void(QNetworkRequest *)> &request_modifier) {
     NetWorker *networker = NetWorker::instance();
-    QNetworkReply *reply = networker->get(url);
+    QNetworkReply *reply = nullptr;
+
+    if (referer_url.isEmpty() && request_modifier == nullptr) {
+        reply = networker->get(url);
+    } else {
+        reply = networker->get_with_referer(url, referer_url, request_modifier);
+    }
 
     QEventLoop synchronous;
     connect(reply, &QNetworkReply::finished, &synchronous, &QEventLoop::quit);
@@ -73,14 +80,18 @@ void NavHistoryDialog::get_more_history(int months) {
 
         QVariantMap response = get_json_from_networker(
                 QString("%1/%2?size=%3&page=%4")
-                        .arg(api_base_url, code, QString::number(page_size), QString::number(current_page)));
+                        .arg(api_base_url, code, QString::number(page_size), QString::number(current_page)),
+                "danjuanfunds.com",
+                [](QNetworkRequest *request) {
+                    request->setRawHeader("Host", "danjuanfunds.com");
+                });
 
         QList<QVariant> items = response["data"].toMap()["items"].toList();
         if (total_pages == 0) { // 第一次 记录总页数
             total_pages = response["data"].toMap()["total_pages"].toInt();
         }
 
-        for (auto &item : items) {
+        for (auto &item: items) {
             int row = table_widget->rowCount();
             table_widget->insertRow(row);
             auto *date_item = new QTableWidgetItem;

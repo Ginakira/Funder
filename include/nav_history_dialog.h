@@ -5,6 +5,7 @@
 #include <limits>
 #include <QDateTime>
 #include <QTableWidget>
+#include <QtNetwork>
 
 #include "include/nav_history_chart_view.h"
 #include "include/settings.h"
@@ -34,7 +35,9 @@ private slots:
     void get_more_history(int months = 1);
 
 private:
-    static QVariantMap get_json_from_networker(const QString &url);
+    static QVariantMap
+    get_json_from_networker(const QString &url, const QString &referer_url = QString(),
+                            const std::function<void(QNetworkRequest *)> &request_modifier = nullptr);
 
     void init_table_widget();
 
